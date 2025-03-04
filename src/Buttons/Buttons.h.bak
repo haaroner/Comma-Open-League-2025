@@ -1,0 +1,39 @@
+#include "project_config.h"
+#include "pin_setup.h"
+#include "time_service.h"
+
+class button
+{
+  public:
+    button(pin &button_pin): _button_pin(button_pin)
+    {
+      _old_data = false;
+    }
+    bool is_pressed();
+  private:
+    uint32_t _time;
+    uint32_t _tim;
+    uint32_t _time_of_pressuring;
+    pin _button_pin;
+    bool _old_data;
+};
+
+bool button::is_pressed()
+{
+  _time = time_service::getCurTime();
+  if(_button_pin.read() != _old_data && _time - _tim > 180)
+  {
+    if(_old_data == 0)
+    {
+      _time_of_pressuring = _time;
+    }
+    _tim = _time;
+  }
+  _old_data = _button_pin.read();
+  if(_time - _time_of_pressuring < 100)
+  {
+    //_time_of_pressuring = 0;
+    return true;
+  }
+  return false;
+}

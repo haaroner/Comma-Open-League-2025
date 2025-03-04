@@ -1,0 +1,32 @@
+//#pragma once
+
+//#include "robot_math.h"
+//#include "Robot.h"
+//#include "project_config.h"
+
+
+////class point
+////{
+////  public:
+////    point(int _x, int _y, int16_t _angle);
+////    int x;
+////    int y;
+////    int16_t angle;
+////};
+
+//void perdict()
+//{
+//  //point test1(0, 0, 0);
+//  
+//  
+//  _xb_ = Robot::old_b_x;
+//  _yb_ = Robot::old_b_y;
+//  
+//  _xb1_ = Robot::ball_abs_x;
+//  _yb1_ = Robot::ball_abs_y;
+//  
+//  _dx1_ = Robot::_dxb;
+//  _dy1_ = Robot::_dyb;
+//  
+//  _alpha_ = atan2(_dx1, _dy1);
+//}

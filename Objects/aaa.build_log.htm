@@ -1,0 +1,106 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.33.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Clown Ezhelev, Comma_robocup, LIC=76F5U-SCS1U-Z9UG9-4SYQM-NR077-EZXR0
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.33.0.0
+Toolchain Path:  D:\keil\sys_files\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.33.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
+Dialog DLL:      TCM.DLL V1.48.0.0
+ 
+<h2>Project:</h2>
+C:\Users\Clown\Desktop\GIT\Comma_2023_open\aaa.uvprojx
+Project File Date:  05/22/2024
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil\sys_files\ARM\ARMCC\Bin'
+Build target 'Target 1'
+compiling main.cpp...
+.\src\robot_math\robot_math.h(58): warning:  #186-D: pointless comparison of unsigned integer with zero
+    if(len1 < 0)
+.\src\robot_math\robot_math.h(64): warning:  #186-D: pointless comparison of unsigned integer with zero
+    if(len2 < 0)
+.\src\robot_math\robot_math.h(210): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+    if(point_distance <= 4.5)
+.\src\robot_math\robot_math.h(211): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      return constrain(20, 20, 0.6 * (point_distance + 28.6));
+.\src\robot_math\robot_math.h(213): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      return constrain(70, 20, 5.5 * (point_distance - 1)); // 5.5 -1
+.\src\adc\adc.h(29): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\dma\dma.h(16): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\flashka\flashka.h(19): warning:  #111-D: statement is unreachable
+    FLASH_Lock();
+.\src\Display\SSD1306\SSD1306.h(156): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\src\Display\font.h(1598): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\src\main\libs.h(29): warning:  #1-D: last line of file ends without a newline
+  #include "dribler.h"
+.\src\Robot\Robot.h(550): warning:  #940-D: missing return statement at end of non-void function "Robot::enable_trajectory" 
+    }
+.\src\Robot\Robot.h(591): warning:  #177-D: variable "d_1_Speed"  was declared but never referenced
+      int d_1_Speed, d_2_speed;
+.\src\Robot\Robot.h(591): warning:  #177-D: variable "d_2_speed"  was declared but never referenced
+      int d_1_Speed, d_2_speed;
+.\src\Robot\Robot.h(592): warning:  #177-D: variable "accel_1_Length"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(592): warning:  #177-D: variable "accel_2_Length"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(592): warning:  #177-D: variable "whole_path"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(754): warning:  #940-D: missing return statement at end of non-void function "Robot::predict" 
+    }
+.\src\Robot\Robot.h(1266): warning:  #1-D: last line of file ends without a newline
+  }
+main.cpp(337): warning:  #177-D: variable "max_robotx"  was declared but never referenced
+          int16_t max_robotx[2] = {87, -72};
+main.cpp(1208): warning:  #1-D: last line of file ends without a newline
+  }
+main.cpp(153): warning:  #550-D: variable "field_center"  was set but never used
+    point field_center;
+main.cpp(209): warning:  #177-D: variable "detour_point"  was declared but never referenced
+    point detour_point;
+main.cpp(220): warning:  #177-D: variable "L_stop_angle"  was declared but never referenced
+          const int16_t L_stop_angle = 128;
+main.cpp(230): warning:  #177-D: variable "R_stop_angle"  was declared but never referenced
+          const int16_t R_stop_angle = -128;
+main.cpp(236): warning:  #550-D: variable "returnR"  was set but never used
+          point returnR;
+main.cpp(240): warning:  #177-D: variable "returnL"  was declared but never referenced
+          point returnL;
+main.cpp(244): warning:  #177-D: variable "returnM"  was declared but never referenced
+          point returnM;
+main.cpp: 28 warnings, 0 errors
+linking...
+Program Size: Code=63844 RO-data=3488 RW-data=25420 ZI-data=12196  
+".\Objects\aaa.axf" - 0 Error(s), 28 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.16.0.pack
+                Keil.STM32F4xx_DFP.2.16.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  D:\keil\pack_folder\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>
