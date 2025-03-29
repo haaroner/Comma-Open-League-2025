@@ -125,4 +125,25 @@ namespace usart2
 		}
 		EXIT_CRITICAL_SECTION();
 	}
+  
+  void abcd(uint8_t _data)
+  {
+   ENTER_CRITICAL_SECTION();
+		if(!flag)
+		{
+		 tx[_txCnt] = _data;
+		 _txCnt++;
+		 if(_txCnt == 20)
+		 {
+		 _txCnt = 0;
+		 }
+		}
+		else
+		{
+		 flag = 0;
+		 (USART2->DR) = _data;
+		}
+		EXIT_CRITICAL_SECTION();
+    return;
+  }    
 }

@@ -153,7 +153,40 @@
           <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407VGTx$CMSIS\Flash\STM32F4xx_1024.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>1040</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134235694</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\src\Robot\Robot.h</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\aaa\main.cpp\1040</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>1055</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>.\main.cpp</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+      </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -243,62 +276,7 @@
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Putin,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>18</count>
-          <WinNumber>1</WinNumber>
           <ItemText>ball_bluetooth_x</ItemText>
-        </Ww>
-        <Ww>
-          <count>19</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Medved,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>20</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>a</ItemText>
-        </Ww>
-        <Ww>
-          <count>21</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>b</ItemText>
-        </Ww>
-        <Ww>
-          <count>22</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>dribler_speed,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>23</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>ball_abs_x,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>24</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>defender_move_y,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>25</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>ball_abs_y,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>26</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>defender_move_x,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>27</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>defender_state,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>28</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>to_keck,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -500,47 +478,42 @@
         <Ww>
           <count>39</count>
           <WinNumber>2</WinNumber>
-          <ItemText>ball_data,0x0A</ItemText>
+          <ItemText>ball_sen_data</ItemText>
         </Ww>
         <Ww>
           <count>40</count>
           <WinNumber>2</WinNumber>
-          <ItemText>ball_sen_data</ItemText>
+          <ItemText>bluetooth_data</ItemText>
         </Ww>
         <Ww>
           <count>41</count>
           <WinNumber>2</WinNumber>
-          <ItemText>dribler_speed,0x0A</ItemText>
+          <ItemText>bluetooth_data</ItemText>
         </Ww>
         <Ww>
           <count>42</count>
           <WinNumber>2</WinNumber>
-          <ItemText>test1,0x0A</ItemText>
+          <ItemText>cross_point.x,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>43</count>
           <WinNumber>2</WinNumber>
-          <ItemText>test2,0x0A</ItemText>
+          <ItemText>cross_point.y,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>44</count>
           <WinNumber>2</WinNumber>
-          <ItemText>bluetooth_data</ItemText>
+          <ItemText>_bytesToSend</ItemText>
         </Ww>
         <Ww>
           <count>45</count>
           <WinNumber>2</WinNumber>
-          <ItemText>bluetooth_data</ItemText>
+          <ItemText>i,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>46</count>
           <WinNumber>2</WinNumber>
-          <ItemText>cross_point.x,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>47</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>cross_point.y,0x0A</ItemText>
+          <ItemText>_rxCnt</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
@@ -605,6 +578,10 @@
         <Entry>
           <Name>System Viewer\USART2</Name>
           <WinId>35903</WinId>
+        </Entry>
+        <Entry>
+          <Name>System Viewer\USART6</Name>
+          <WinId>35900</WinId>
         </Entry>
       </SystemViewers>
       <DebugDescription>
@@ -759,7 +736,7 @@
 
   <Group>
     <GroupName>Robot</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -787,7 +764,7 @@
 
   <Group>
     <GroupName>Maths</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -867,7 +844,7 @@
 
   <Group>
     <GroupName>pins</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -899,7 +876,7 @@
 
   <Group>
     <GroupName>time_service</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1207,7 +1184,7 @@
 
   <Group>
     <GroupName>OpenMv</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1327,7 +1304,7 @@
 
   <Group>
     <GroupName>dribler</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1531,7 +1508,7 @@
 
   <Group>
     <GroupName>TSSP</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1759,7 +1736,7 @@
 
   <Group>
     <GroupName>Queue</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1779,7 +1756,7 @@
 
   <Group>
     <GroupName>display</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1886,11 +1863,23 @@
   </Group>
 
   <Group>
-    <GroupName>New Group</GroupName>
-    <tvExp>0</tvExp>
+    <GroupName>BLDC Motor</GroupName>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>29</GroupNumber>
+      <FileNumber>88</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\src\BLDC_Motor\BLDC_Motor.h</PathWithFileName>
+      <FilenameWithoutPath>BLDC_Motor.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
 </ProjectOpt>

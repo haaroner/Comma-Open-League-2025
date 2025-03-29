@@ -41,7 +41,7 @@ pin::pin(char pin_gpio, uint8_t pin_num, uint16_t function)
 		_modeGPIO = GPIO_Mode_AF;
 		_speedGPIO = GPIO_Speed_100MHz;
 		_typeGPIO = GPIO_OType_PP;
-		_pupdGpio = GPIO_PuPd_NOPULL;
+		_pupdGpio = GPIO_PuPd_DOWN;
 		if(function == uart1) _AFGPIO = GPIO_AF_USART1;
 		if(function == uart2) _AFGPIO = GPIO_AF_USART2;
 		if(function == uart3) _AFGPIO = GPIO_AF_USART3;

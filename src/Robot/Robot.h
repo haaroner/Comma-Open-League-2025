@@ -173,7 +173,7 @@ namespace Robot
     
     control_led(0, OFF);
     
-    usartik1::usart1Init(9600, 8, 1, 10);//bluetooth
+    //usartik1::usart1Init(9600, 8, 1, 10);//bluetooth
     usart2::usart2Init(230400, 8, 1);//camera
     usart6::usart6Init(115200, 8, 1);//gyro
     
@@ -239,22 +239,22 @@ namespace Robot
   
   void send_bluetooth_data(int _num1, int _num2, int _num3)
   {
-    if(_num3 < 50)
-      usartik1::abcde(255);
-    else if(_num3 < 100)
-      usartik1::abcde(254);
-    else
-      usartik1::abcde(253);
-    _num1 = constrain(255, 0, int((constrain(200, -200, _num1) / 2) + 100));
-    _num2 = constrain(255, 0, int((constrain(200, -200, _num2) / 2) + 100));
-   // _num3 = constrain(255, 0, int((constrain(200, -200, _num3) / 2) + 100));
-   // uint8_t data[3] = {_num1, _num2, _num3};
-    usartik1::abcde(_num1);
-    usartik1::abcde(_num2);
-    usartik1::abcde((_num1 + _num2) / 2);
-   // usartik1::abcde(_num3);
-    //usartik1::abcde(crc8(data, 3));
-    return;
+//    if(_num3 < 50)
+//      usartik1::abcde(255);
+//    else if(_num3 < 100)
+//      usartik1::abcde(254);
+//    else
+//      usartik1::abcde(253);
+//    _num1 = constrain(255, 0, int((constrain(200, -200, _num1) / 2) + 100));
+//    _num2 = constrain(255, 0, int((constrain(200, -200, _num2) / 2) + 100));
+//   // _num3 = constrain(255, 0, int((constrain(200, -200, _num3) / 2) + 100));
+//   // uint8_t data[3] = {_num1, _num2, _num3};
+//    usartik1::abcde(_num1);
+//    usartik1::abcde(_num2);
+//    usartik1::abcde((_num1 + _num2) / 2);
+//   // usartik1::abcde(_num3);
+//    //usartik1::abcde(crc8(data, 3));
+//    return;
   }
   
   void use_dribler(bool _data)

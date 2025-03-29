@@ -41,3 +41,5 @@
 .\objects\usart6.o: .\src\main\project_config.h
 .\objects\usart6.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\math.h
 .\objects\usart6.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\string.h
+.\objects\usart6.o: .\src\time_service\time_service.h
+.\objects\usart6.o: .\src\main\project_config.h
