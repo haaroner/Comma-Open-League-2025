@@ -5,6 +5,7 @@
 //#include "usartik2.h"
 #include "usart6.h"
 #include "BLDC_Motor.h"
+#include "usart3.h"
 
 #define TEST_DRIBLER false
 #define TEST_MOTORS false
@@ -81,10 +82,50 @@ bool ball_position_fixed = false;
 
 uint32_t change_trajectory_tim = 0;
 
+BLDC MotorA(6, 'A', 'e', 'Z', 5000);
+  BLDC MotorB(6, 'B', 'e', 'Z', 5000);
+  BLDC MotorC(6, 'C', 'e', 'Z', 5000);
+  BLDC MotorD(6, 'D', 'e', 'Z', 5000);
+
+void move(int angle, int speed, int rotation)
+{
+  int m1, m2, m3, m4;
+  m1 = (speed*cos((angle + 60) * DEG2RAD));
+  m2 = (speed*cos((angle + 130) * DEG2RAD));
+  m3 = (speed*cos((angle - 130) * DEG2RAD));
+  m4 = (speed*cos((angle - 60) * DEG2RAD));
+  int e = (m1 + m2 + m3 + m4) / 4;
+  m1 -= e;
+  m2 -= e;
+  m3 -= e;
+  m4 -= e;
+  
+  m1+=rotation;
+  m2+=rotation;
+  m3+=rotation;
+  m4+=rotation;
+  
+
+  MotorA.set_speed(m1);
+  MotorB.set_speed(int(-1 * m2));
+//  usart3::write('B');
+//    usart3::write('-');
+//    usart3::write('1');
+//    usart3::write('1');
+//    usart3::write('e');
+  MotorC.set_speed(m3);
+  //time_service::delay_ms(10);
+  MotorD.set_speed(m4);
+  //time_service::delay_ms(10);
+}
+
+
 //values for test
 volatile uint16_t dribler_speed = 0, debug_state = 0;
 volatile uint8_t to_keck = 0; 
 volatile uint32_t pinok_delay = 20, pinok_wait = 7;
+
+volatile int32_t nastya = 35;
 
 //PID forward_out(0.3, 0, -2); //0.25
 //PID backward_out(0.3, 0, -2);
@@ -99,32 +140,32 @@ int main()
   //pin usart6_tx('C', 6,  uart6);	
  // pin usart6_rx('C', 7,  uart6); 
   Robot::init_robot(role);
+  usart3::usart3Init(115200, 8, 1);
+  //usart2::usart2Init(230400, 8, 1);
   //usart2::usart2Init(115200, 8, 1);
   //usartik1::usart1Init(9600, 8, 1, 10);
-  //BLDC MotorA(6, 'A', 'e', 'Z', 5000);
+  Robot::wait(100);
+  MotorA.callibrate();
+  Robot::wait(4000);
+  move(0,0,0);
+  Robot::wait(2000);
   //usartik2::usartik2Init(9600, 8, 1);
   //Robot::wait(2000);
    //time_service::delay_ms(6000);
     
   while(true)
   {
-    for(int i = 0; i < 192; i++)
-    {
-   // i = 100;
-    super_timer = time_service::getCurTime();
-    usart6::write(i);
-    out_diving = false;
-    while(out_diving == false && time_service::getCurTime() - super_timer < 1000)
-    {
-      if(usart6::available() > 0)
-        old_game_state = usart6::read();
-        if(old_game_state == i)
-          out_diving = true;
-        
-    }
-    Robot::display_data(time_service::getCurTime() - super_timer, old_game_state);
+    //move(100, nastya);
+    //time_service::delay_ms(1000);
+    //move(1000, 180);
+    //time_service::delay_ms(1000);
+    //Robot::usart2_rx.setBit();
+    //Robot::usart2_tx.setBit();
+    move(0, 0, (Robot::gyro*0.5));
+    //if(usart2::available()>0)
+    //Robot::display_data(usart2::read());
+    Robot::wait(1);
     Robot::update();
-    }
   }
 //   Adc adc_voltage(ADC1, 1, 15, RCC_APB2Periph_ADC1, Robot::battery_charge, 5);
 //  adc_voltage.sendMeChannel(15);

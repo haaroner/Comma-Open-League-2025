@@ -41,8 +41,8 @@ extern "C"
 
 namespace usart3
 {
-  volatile uint8_t tx[8];
-  volatile uint8_t rx[8];
+  volatile uint8_t tx[16];
+  volatile uint8_t rx[16];
   volatile uint16_t _rxCnt;
   volatile uint16_t _txCnt;
   volatile bool flag;
@@ -89,7 +89,7 @@ namespace usart3
 		ENTER_CRITICAL_SECTION();
 		dt = rx[_readCnt];
 		_readCnt++;
-		if(_readCnt == 8)
+		if(_readCnt == 16)
 		{
 		 _readCnt = 0;
 		}
@@ -113,7 +113,7 @@ namespace usart3
 		{
 		 tx[_txCnt] = _byte;
 		 _txCnt++;
-		 if(_txCnt == 8)
+		 if(_txCnt == 16)
 		 {
 		 _txCnt = 0;
 		 }

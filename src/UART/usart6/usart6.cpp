@@ -54,7 +54,7 @@ extern "C" void USART6_IRQHandler(void)
     {
       --usart6::_bytesToSend;
       USART_SendData(USART6, usart6::tx[usart6::_sendCnt++]);
-      if(usart6::_sendCnt == 16)
+      if(usart6::_sendCnt == 30)
         usart6::_sendCnt = 0;
     }
     else
@@ -77,7 +77,7 @@ extern "C" void USART6_IRQHandler(void)
       //if write counter reached read, and not read counter reached write
       if((usart6::_receiver_buffer_overflow_warning == true) && (usart6::_readCnt == usart6::_rxCnt))
         usart6::_readCnt++;
-      if(usart6::_readCnt == 16)
+      if(usart6::_readCnt == 30)
         usart6::_readCnt = 0;
       
       if(usart6::_readCnt > usart6::_rxCnt)//if write counter can reach read cnt
@@ -86,7 +86,7 @@ extern "C" void USART6_IRQHandler(void)
         usart6::_receiver_buffer_overflow_warning = false;
       
       usart6::_rxCnt++;
-      if(usart6::_rxCnt == 16)
+      if(usart6::_rxCnt == 30)
         usart6::_rxCnt = 0;
     }
   }
@@ -94,8 +94,8 @@ extern "C" void USART6_IRQHandler(void)
 
 namespace usart6
 {
-  volatile uint8_t tx[16];
-  volatile uint8_t rx[16];
+  volatile uint8_t tx[30];
+  volatile uint8_t rx[30];
   volatile uint16_t _rxCnt;
   volatile uint16_t _txCnt;
   volatile bool flag;
@@ -129,7 +129,7 @@ namespace usart6
 		u.USART_WordLength = USART_WordLength_8b;
 		u.USART_StopBits = USART_StopBits_1;
 		u.USART_Parity = USART_Parity_No;
-		u.USART_Mode =     USART_Mode_Rx | USART_Mode_Tx;
+		u.USART_Mode =  USART_Mode_Rx | USART_Mode_Tx;
 		u.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 		USART_Init(USART6, &u);
 ////		USART_ITConfig(USART6, USART_IT_TC, ENABLE);
@@ -156,7 +156,7 @@ namespace usart6
 		ENTER_CRITICAL_SECTION();
 		dt = rx[_readCnt];
 		_readCnt++;
-		if(_readCnt == 16)
+		if(_readCnt == 30)
 		{
 		 _readCnt = 0;
 		}
@@ -180,13 +180,13 @@ namespace usart6
     //while (USART_GetFlagStatus(USART6, USART_FLAG_TC) == RESET);
     //USART_SendData(USART6,_byte);
 		ENTER_CRITICAL_SECTION();
-    if(_bytesToSend < 15)
+    if(_bytesToSend < 29)
     {
       USART_ITConfig(USART6, USART_IT_TXE, ENABLE);
 		 tx[_txCnt] = _byte;
 		 _txCnt++;
       _bytesToSend += 1;
-		 if(_txCnt == 16)
+		 if(_txCnt == 30)
 		 {
 		 _txCnt = 0;
 		 }

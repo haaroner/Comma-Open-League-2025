@@ -8,8 +8,8 @@ namespace usart6
 	void write(uint8_t _byte);
 	uint16_t read();
 	uint16_t available();
-	extern volatile uint8_t tx[16];
-	extern volatile uint8_t rx[16];
+	extern volatile uint8_t tx[30];
+	extern volatile uint8_t rx[30];
 	extern volatile uint16_t _rxCnt;
 	extern volatile uint16_t _txCnt;
 	extern volatile bool flag;

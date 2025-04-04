@@ -55,7 +55,11 @@
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\UART\usart3\usart3.h
 .\objects\main.o: .\src\main\project_config.h
+.\objects\main.o: .\src\time_service\time_service.h
+.\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\UART\usart2\usart2.h
+.\objects\main.o: .\src\main\project_config.h
+.\objects\main.o: .\src\time_service\time_service.h
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\usartik1\usartik1.h
 .\objects\main.o: .\src\main\project_config.h

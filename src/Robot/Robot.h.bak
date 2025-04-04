@@ -6,9 +6,9 @@
 
 namespace Robot
 { 
-  pin led1('A', 0, write_UP); 
-  pin led2('A', 1, write_UP); 
-  pin led3('A', 2, write_UP); 
+  pin led1('E', 7, write_UP); 
+  pin led2('E', 9, write_UP); 
+  pin led3('E', 11, write_UP); 
   
   Motor m2('E', 13, tim1, CHANNEL3, 'E', 14, tim1, CHANNEL4);					
   Motor m3('D', 12, tim4, CHANNEL1, 'D', 13, tim4, CHANNEL2);
@@ -24,8 +24,8 @@ namespace Robot
   pin usart6_tx('C', 6,  uart6);	
   pin usart6_rx('C', 7,  uart6);   
 
-  pin usart1_tx('B', 6, uart1);
-  pin usart1_rx('B', 7, uart1);
+  pin usart1_tx('A', 9, uart1);
+  pin usart1_rx('A', 10, uart1);
     
   pin motors_move('B', 1, read_UP);
   pin gyro_reset('B', 0, read_UP);	
@@ -42,21 +42,24 @@ namespace Robot
   pin tssp_left_read('C', 3, read_DOWN);
   pin tssp_right_read('C', 2, read_DOWN);  
   
-  pin up('B', 5, read_UP);
-  pin down('B', 8, read_UP);
-  pin enter('E', 3, read_UP);
+  pin up('D', 13, read_UP);
+  pin down('D', 12, read_UP);
+  pin enter('D', 14, read_UP);
   
   pin spi3_mosi('C', 12, spi3);
   pin spi3_sck('C', 10, spi3);
   pin spi3_dc('A', 15, write_DOWN);
   pin spi3_cs('E', 0, write_DOWN);
   pin spi3_rst('C', 11, write_DOWN);
-  pin usart2_rx('D', 6, uart2);
-  pin usart2_tx('D', 7, uart2);
+  pin usart2_tx('A', 2, uart2);
+  pin usart2_rx('A', 3, uart2);
+  
+  pin usart3_tx('B', 10, uart3);
+  pin usart3_rx('B', 11, uart3);
   
   pin Kecker('E', 9, write_);
   
-  pin ball_sen_adc('A', 3, adc);
+  //pin ball_sen_adc('A', 3, adc);
   
   pin battery_charge('C', 5, adc);
   
@@ -173,9 +176,9 @@ namespace Robot
     
     control_led(0, OFF);
     
-    //usartik1::usart1Init(9600, 8, 1, 10);//bluetooth
+    //usartik1::usart1Init(230400, 8, 1, 10);//bluetooth
     usart2::usart2Init(230400, 8, 1);//camera
-    //usart6::usart6Init(115200, 8, 1);//gyro
+    usart6::usart6Init(115200, 8, 1);//gyro
     
     //adc_voltage.sendMeChannel(15);
     #if USE_DISPLAY
@@ -184,12 +187,17 @@ namespace Robot
     #endif
     
     #if USE_DRIBLER
-      dribler_control.pwm(200);
-      time_service::delay_ms(500);
-      dribler_control.pwm(300);
-      time_service::delay_ms(500);
-      dribler_control.pwm(200);
-      time_service::delay_ms(1000);
+      Robot::dribler_control.pwm(90);
+  time_service::delay_ms(500);
+  Robot::dribler_control.pwm(100);
+  time_service::delay_ms(500);
+  Robot::dribler_control.pwm(120);
+  time_service::delay_ms(500);
+  Robot::dribler_control.pwm(90);
+  time_service::delay_ms(500);
+  Robot::dribler_control.pwm(100);
+  time_service::delay_ms(500);
+  dribler_speed = 100;
     #endif
     
     init_timer = time;
@@ -264,9 +272,9 @@ namespace Robot
   
   void check_buttons()
   {
-    buttons_data[0] = up.read();
-    buttons_data[1] = GPIOB -> IDR & GPIO_Pin_8; // Idk why standart class reading isnt working on this pin
-    buttons_data[2] = enter.read();
+    buttons_data[0] = GPIOD -> IDR & GPIO_Pin_13;
+    buttons_data[1] = GPIOD -> IDR & GPIO_Pin_12; // Idk why standart class reading isnt working on this pin
+    buttons_data[2] = GPIOD -> IDR & GPIO_Pin_14;
     
     
     for(int i = 0; i < 3; i++)
@@ -1094,25 +1102,25 @@ namespace Robot
      bluetooth_send_timer = time;
     }
    
-    if(usartik1::available() >= 4)
-    {
-      for (int i = 0; i < 4; i++)
-        bluetooth_data[i] = usartik1::read();
-      if(bluetooth_data[0] >= 253 && my_abs(bluetooth_data[3] - (bluetooth_data[1] + bluetooth_data[2]) / 2) < 2)
-      {
-          bluetooth_receive_time = time;
-          ball_bluetooth_x = int(bluetooth_data[1] - 100) * 2;
-          ball_bluetooth_y = int(bluetooth_data[2] - 100) * 2;
-          ball_bluetooth_dist = bluetooth_data[0];
-        
-      }
-    }
-    if(time - timer10ms > 10)
-    {
-      //ball_sen_data = DMA_ball_sen.dataReturn(0);
-      ball_sen_data_soft = ball_sen_data * ball_sen_data_k + ball_sen_data_soft * (1 - ball_sen_data_k);
-      timer10ms = time;
-    }
+//    if(usartik1::available() >= 4)
+//    {
+//      for (int i = 0; i < 4; i++)
+//        bluetooth_data[i] = usartik1::read();
+//      if(bluetooth_data[0] >= 253 && my_abs(bluetooth_data[3] - (bluetooth_data[1] + bluetooth_data[2]) / 2) < 2)
+//      {
+//          bluetooth_receive_time = time;
+//          ball_bluetooth_x = int(bluetooth_data[1] - 100) * 2;
+//          ball_bluetooth_y = int(bluetooth_data[2] - 100) * 2;
+//          ball_bluetooth_dist = bluetooth_data[0];
+//        
+//      }
+//    }
+//    if(time - timer10ms > 10)
+//    {
+//      //ball_sen_data = DMA_ball_sen.dataReturn(0);
+//      ball_sen_data_soft = ball_sen_data * ball_sen_data_k + ball_sen_data_soft * (1 - ball_sen_data_k);
+//      timer10ms = time;
+//    }
     
 //    if(camera.get_ball_seen_time() + 100 < bluetooth_receive_time || (ball_distance > 150 && ball_bluetooth_dist > 253 && time - bluetooth_receive_time < 100))
 //    {

@@ -17,5 +17,5 @@ namespace usart6
 	extern volatile uint16_t _sendCnt;
   extern volatile uint8_t _bytesToSend;
   extern volatile uint32_t _tets;
-  volatile bool _receiver_buffer_overflow_warning;
+  extern volatile bool _receiver_buffer_overflow_warning;
 }

@@ -129,7 +129,7 @@ namespace usart6
 		u.USART_WordLength = USART_WordLength_8b;
 		u.USART_StopBits = USART_StopBits_1;
 		u.USART_Parity = USART_Parity_No;
-		u.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+		u.USART_Mode =     USART_Mode_Rx | USART_Mode_Tx;
 		u.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 		USART_Init(USART6, &u);
 ////		USART_ITConfig(USART6, USART_IT_TC, ENABLE);

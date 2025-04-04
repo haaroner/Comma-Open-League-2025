@@ -41,3 +41,5 @@
 .\objects\uart2.o: .\src\main\project_config.h
 .\objects\uart2.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\math.h
 .\objects\uart2.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\string.h
+.\objects\uart2.o: .\src\time_service\time_service.h
+.\objects\uart2.o: .\src\main\project_config.h
