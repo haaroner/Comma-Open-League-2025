@@ -1,0 +1,22 @@
+#pragma once
+#include <project_config.h>
+#include <motor.h>
+#include "math.h"
+
+class test_motors
+{
+	public:
+		test_motors(Motor &m3);
+	void moveMotor(int32_t power);
+	void stopRobot();
+	void moveRobot(int _maxPower,
+										 int _maxPower_angle,
+										 int _angle,
+										 int _inc);
+                     
+	private:
+		Motor _m3;
+		signed int opowers;
+		uint16_t _maxPowerMove;
+		double ang;
+};

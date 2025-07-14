@@ -1,0 +1,79 @@
+#include "project_config.h"
+#include "usart3.h"
+#include "time_service.h"
+
+uint8_t _num1 = 0, _num2 = 0;
+bool _robot = 0, _defence_mode = 0, _attack_available = 1;
+uint32_t _time = 0, _time_out = 1000;
+
+void bluetooth_init(bool robot, uint32_t time_out)
+{
+  _robot = robot;
+  if(time_out <= 1.67 + 5) time_out = 250; // 1.67 is a time to send 16 bits at speed 9600 (+5 is overvalued loop delay)
+  else _time_out = time_out;
+}
+
+void bluetooth_send_data(bool _game, bool _is_dribling_in_progress)
+{
+  _num1 = 0;
+  
+  usart3::write(255);
+  _num1 += _game * 100;
+  _num1 += _is_dribling_in_progress * 10;
+  
+//  if(_role == 0) _role = 2;
+//  if(_robot) _num1 += _role;
+  usart3::write(_num1);
+}
+
+void semicolon_advise_send(bool _data)
+{
+  if(_data == 1) usart3::write(255);
+}
+
+bool semicolon_advise_read()
+{
+  if(usart3::available() > 0)
+  {
+    usart3::read();
+    _time = time_service::getCurTime();
+  }
+  if(time_service::getCurTime() - _time > 1000) return false;
+   return true;
+}
+
+void bluetooth_read_data()
+{
+  if(usart3::available() >= 2)
+  {
+    if(usart3::read() == 255)
+    {
+      _num2 = usart3::read();
+      
+      if(int(_num2 / 100) == 0)_defence_mode = 1;
+      else _defence_mode = 0;
+      
+      if(int((_num2 % 100) / 10) == 1) _attack_available = 0;
+      else _attack_available = 1; 
+      
+      _time = time_service::getCurTime();
+    }
+  }
+  
+  if(time_service::getCurTime() - _time > _time_out)
+  {
+    _defence_mode = 0;
+    _attack_available = 1;
+  }
+}
+
+bool get_defence_mode()
+{
+  return _defence_mode;
+}
+
+bool is_attack_available()
+{
+  return _attack_available;
+}
+

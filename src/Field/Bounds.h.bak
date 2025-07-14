@@ -1,0 +1,15 @@
+#pragma once
+
+#include "Robot.h"
+
+class Bounds
+{
+  public:    
+  Bounds();
+  polar_vector detect_out_of_bounds(bool enable_diving = 0);
+  bool is_diving();
+  
+  private:
+  int _robot_x, _robot_y, _forward_distance, _backward_distance;
+  int _move_angle, _move_speed, _forward_angle, _forward_speed;
+};

@@ -1,0 +1,118 @@
+#pragma once
+
+#include "math.h"
+#include "project_config.h"
+
+#define RAD2DEG	57.2957795130823208767
+#define DEG2RAD	0.01745329251994329576
+
+#define ON 1
+#define OFF 0
+
+#define UP_BUTTON 1
+#define DOWN_BUTTON 2
+#define ENTER_BUTTON 3
+
+#define CHANNEL1 1
+#define CHANNEL2 2
+#define CHANNEL3 3
+#define CHANNEL4 4
+
+int lead_to_degree_borders(int _num);
+int lead_to_borders(int max, int min, int _num);
+bool is_in_the_angle_borders(int max, int min, int _num);
+bool is_in_the_borders(int max, int min, int num);
+int constrain(int max, int min, int _num);
+float constrainf(float max, float min, float _num);
+
+struct point
+{
+  point(int _x, int _y, int _angle, int _significanse)
+  {
+    x = _x;
+    y = _y;
+    angle = _angle;
+    significanse = _significanse;
+  }
+  
+  point(int _x, int _y)
+  {
+    x = _x;
+    y = _y;
+    angle = 255;
+    significanse = 0;
+  }
+  
+  point(float _x, float _y)
+  {
+    x = _x;
+    y = _y;
+    angle = 255;
+    significanse = 0;
+  }
+  
+  point()
+  {}
+    
+  float x;
+  float y;
+  int angle;
+  uint8_t significanse;
+  uint16_t distance;
+};
+
+struct line
+{
+  double a;
+  double c;
+};
+
+struct polar_vector
+{
+  int angle;
+  int length;
+};
+
+struct circle
+{
+  circle(int _x0, int _y0, int _R)
+  {
+    x0 = _x0;
+    y0 = _y0;
+    R = _R;
+    center.x = x0;
+    center.y = y0;
+  }
+  int x0, y0, R;
+  point center;
+};
+
+enum trajectory_type
+{
+  short_trajectory,
+  long_trajectory,
+  detour_trajectory,
+  undefined_trajectory
+};
+
+enum sector
+{
+  left_sector = 0,
+  middle_sector = 1,
+  right_sector = 2
+};
+
+enum solenoid
+{
+  left_solenoid = 0,
+  middle_solenoid = 1,
+  right_solenoid = 2,
+  side_solenoids = 3
+};
+
+enum num_of_capacitors
+{
+  L_capacitor = 0,
+  two_capasitors = 1,
+  R_capacitor = 2
+};

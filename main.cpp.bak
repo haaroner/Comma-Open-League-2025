@@ -1,0 +1,764 @@
+#pragma once
+
+#include "Robot.h"
+#include "Settings.h"
+
+uint8_t attacker_state, attacker_old_state = 1, attacker_state1_tim = 0;
+uint8_t defender_state = 1, defender_old_state = 0;
+uint8_t defender_defence_sector, defender_move_sector;
+point defender_move_point, defender_defence_point, 
+defender_new_left_change_sector, defender_new_right_change_sector,
+attacker_start_2_state_point;
+int16_t attacker_2_state_side;
+int defender_move_speed = 0, defender_move_point_dist;
+int additional_defender_y = 0;
+uint32_t timer_100ms = 0;
+int test_1 = 0;
+uint32_t attacker_2_to_1_tim = 0;
+
+uint8_t _daleko = 0;
+
+uint32_t defender_1_to_2_tim = 0, defender_2_to_1_tim,
+         defender_1_to_3_tim = 0, defender_3_to_1_tim = 0, test_timer_1 = 0;
+int attacker_2_state_trajectory_type = undefined_trajectory;
+circle defender_gate_circle(0, -5, 40);
+uint32_t _attacker_4_tim = 0, _attacker_4_sub_tim = 0;
+uint8_t attacker_use_detour = 0;
+uint32_t attacker_start_detour_timer = 0, attacker_stop_detour_timer = 0;
+uint32_t _goida = 0;
+point defender_middle_cross_point, defender_detour_left_point, defender_detour_right_point,
+defender_detour_point, ball_abs_position;
+
+#define TEST_DRIBLER false
+#define TEST_MOTORS false
+#define TEST_BLUETOOTH false
+ 
+uint8_t role = 0, gaming_state = 0;  
+uint8_t _abc = 0;
+line defender_left_line, defender_middle_line, defender_right_line,
+  defender_ball_gate_line;
+bool _aboba = false;
+uint8_t test_dribler_speed = 0, to_keck = 0, test_stop_dribler_speed = 0;
+uint32_t _test_dribler_power = 5, test_stop_time = 5;
+uint32_t spas = 0;
+int main()
+{
+  
+  Adc ADC_ball_sen(ADC2, 1, 8, RCC_APB2Periph_ADC2, Robot::ball_sen_adc, 5);
+  ADC_ball_sen.sendMeChannel(8);
+  
+  Dma DMA_ball_sen(RCC_AHB1Periph_DMA2, ADC_ball_sen);
+  DMA_ball_sen.dmaInit(DMA2_Stream3, DMA_Channel_1, 1);
+  DMA_ball_sen.adcInitInDma(5);
+  
+  Robot::ball_led_adc.setBit();
+  point challenge_point(0, 75); 
+  role = 1;
+  Robot::init_robot(role);
+  
+  Robot::kecker_cap_1.resetBit() ;
+  Robot::kecker_cap_2.resetBit(); 
+  
+  Robot::kecker_solenoid_C.resetBit();
+  Robot::kecker_solenoid_R.resetBit();
+  Robot::kecker_solenoid_L.resetBit();
+  Robot::kecker_kick.resetBit();
+  Robot::motors_on_off(ON);
+  
+  
+  #if TEST_DRIBLER
+  
+  while(true)
+  {
+    Robot::use_dribler(true);
+    Robot::set_dribler_speed(constrain(150, 0, test_dribler_speed));
+    if(to_keck == 1)
+    {//AWESOME KICK PARAMS 90 drib   3ms kick
+      Robot::set_dribler_speed(test_dribler_speed, true);
+      Robot::wait(300);
+      Robot::set_dribler_speed(test_stop_dribler_speed, true);
+      Robot::wait(test_stop_time);
+      if(test_1 == 1)
+        Robot::keck_new(right_solenoid, L_capacitor, _test_dribler_power);
+      else
+        Robot::keck_new(left_solenoid, L_capacitor, _test_dribler_power);
+      Robot::wait(50);
+      test_dribler_speed = constrain(120, 0, test_dribler_speed);
+      Robot::wait(100);
+      to_keck = 0;
+    }
+    Robot::update();
+  }
+  #endif
+  
+  #if TEST_MOTORS
+  Robot::wait(5000);
+  Robot::use_dribler(true);
+  while(true)
+  {
+    
+    Robot::moveRobotAbs(0, 100);
+    Robot::set_dribler_speed(40);
+    Robot::update();
+    Robot::display_data(Robot::cur_dribler_speed);
+    Robot::wait(10);
+  }
+  #endif
+
+  while(true)
+  {
+    gaming_state = Robot::_game_state;
+    
+    ball_abs_position.x = Robot::ball_abs_x;
+    ball_abs_position.y = Robot::ball_abs_y;
+    
+    if(gaming_state == 0)
+    {
+      Robot::enable_game_zone_restriction(false);
+      Robot::use_dribler(true);
+      Robot::set_dribler_speed(0);
+      Robot::enable_trajectory(false);
+      
+      if(!Robot::is_callibrated)
+        Robot::set_blinking(1, 300);
+      else
+      {
+        Robot::control_led(1, Robot::is_ball_seen);
+      }
+      Robot::control_led(3, my_abs(Robot::gyro) < 5);
+      Robot::control_led(2, my_abs(lead_to_degree_borders(Robot::gyro - Robot::forward_angle)) < 10);   
+      attacker_state = 1;
+      attacker_old_state = 0;
+      defender_state = 1;
+      defender_old_state = 0;
+      Robot::display_data(Robot::is_ball_captured(), my_abs(Robot::_ball_sen_high_data - Robot::_ball_sen_low_data));
+    }
+    else if(gaming_state == 1)
+    {
+      if(role == 1)
+      {
+        if((!Robot::is_ball_captured()))
+        {
+          Robot::moveRobotAbs(Robot::ball_abs_angle, 15);
+          Robot::setAngle(Robot::ball_abs_angle, 20.0, 0.2, -0.1, 0.05);        
+          if(my_abs(Robot::ball_loc_angle) > 30)
+            Robot::move_speed *= 0.75;
+          Robot::set_dribler_speed(90);
+        }
+        else
+        {
+          Robot::setAngle(Robot::forward_angle, 5.0, 0.3, -0.1, 0.05);
+          if(Robot::getDistanceToPoint(challenge_point) < 30)
+            Robot::moveToPoint(challenge_point, 10, 0);
+          else
+            Robot::moveToPoint(challenge_point, 10, 0);
+          
+          if(Robot::getDistanceToPoint(challenge_point) < 7)
+          {
+            Robot::set_dribler_speed(90);
+            Robot::moveRobotAbs(0, 20);
+            Robot::moveRobotAbs(0, 0);
+            if(Robot::time % 10 <= 4)
+              Robot::wait(1500, true, Robot::forward_angle+10, 10, Robot::forward_angle);
+            else
+              Robot::wait(1500, true, Robot::forward_angle-10, 10, Robot::forward_angle);
+            Robot::moveRobotAbs(0, 0);
+            Robot::rotateRobot(0, 0);
+            Robot::wait(200);
+            Robot::keck_new(middle_solenoid, two_capasitors, 100);
+            Robot::wait(2000);
+          }
+        }
+      }
+      if(role == 3)
+      {
+        Robot::enable_game_zone_restriction(false);
+        
+        if(attacker_state == 255)
+        {
+          Robot::moveRobot(90, 5);
+          Robot::set_dribler_speed(0);
+          Robot::rotateRobot(0, 0);
+          Robot::update();
+        }
+        
+        if(attacker_state == 1)
+        {
+          Robot::changeSmoothness(1);
+          if(attacker_old_state != 1)
+          {
+            attacker_state1_tim = Robot::time;
+          }
+          if(Robot::ball_distance < 30 || Robot::is_ball_captured())
+            Robot::set_dribler_speed(85.0);        
+          else      
+            Robot::set_dribler_speed(0.0);  
+
+          if(Robot::is_ball_captured() && (Robot::time - attacker_state1_tim) > 500 && Robot::time - spas > 100)
+          {
+            Robot::moveRobot(0, 5);
+            Robot::enable_game_zone_restriction(true);
+            if(Robot::forward_distance > 72 && Robot::time - _goida > 100)
+            {              
+            Robot::set_dribler_speed(90, true);
+            Robot::wait(100);
+            Robot::set_dribler_speed(100, true);
+            Robot::wait(750);
+            Robot::set_dribler_speed(100, true);
+            attacker_state = 2;
+              if(Robot::time%10 <=8)
+                _aboba = true;
+              else
+                _aboba = false;
+            }
+            else
+            {
+              Robot::set_dribler_speed(130, true);
+              Robot::wait(200);
+              if(_daleko != 2)
+                _daleko = 0;
+              attacker_state = 4;
+              _attacker_4_tim = Robot::time;
+            }
+            attacker_use_detour = 0;
+            attacker_start_detour_timer = Robot::time;
+            attacker_start_2_state_point.x = Robot::robot_x;
+            attacker_start_2_state_point.y = Robot::robot_y;
+            
+            attacker_2_state_trajectory_type = undefined_trajectory;
+            
+            if(Robot::robot_y < 170)
+            {
+              if(Robot::time % 10 <   ATTACKER_SHORT_TRAJECTORY_CHANCE)
+                attacker_2_state_side = my_sgn(Robot::robot_x);
+              else
+                attacker_2_state_side = my_sgn(Robot::robot_x)*-1;
+            }
+            else
+              attacker_2_state_side = my_sgn(Robot::robot_x)*-1;         
+          }
+         attacker_old_state = 1;
+        }
+        if(attacker_state == 2)
+        {
+          _goida = Robot::time;
+          _aboba = false;
+          Robot::enable_game_zone_restriction(true);
+          if(attacker_old_state != 2)
+          {
+            attacker_use_detour = 0;
+            attacker_start_detour_timer = Robot::time;
+            attacker_stop_detour_timer = Robot::time;
+          }
+          if(Robot::is_ball_captured()) attacker_2_to_1_tim = Robot::time;
+          
+          if(Robot::time - attacker_2_to_1_tim > 500)
+          {
+            Robot::enable_game_zone_restriction(false);
+            Robot::enable_trajectory(false);
+            attacker_state = 1;
+            attacker_old_state = 2;
+          }
+          
+          if(attacker_use_detour == 1 && Robot::time - attacker_stop_detour_timer > 6000 && Robot::robot_position_diff < 10)
+          {
+            Robot::wait(100);
+            attacker_state = 3;
+            attacker_old_state = 2;
+          }
+          
+        }
+         if(attacker_state == 3)
+         {
+          Robot::enable_game_zone_restriction(true);
+          if(!Robot::is_ball_captured())
+          {
+            Robot::enable_trajectory(false);
+            attacker_state = 1;
+            attacker_old_state = 3;
+          }
+          
+          }
+         if(attacker_state == 4)
+         {
+           _attacker_4_sub_tim = Robot::time;
+           attacker_old_state = 4;
+         }
+        if(attacker_state == 1)
+        {  
+          Robot::enable_trajectory(false);
+          Robot::moveRobotAbs(Robot::ball_abs_angle, new_velocity(Robot::ball_distance));
+          Robot::setAngle(Robot::ball_abs_angle, 20.0, 0.2, -0.1, 0.05);
+          
+          if(my_abs(Robot::ball_loc_angle) > 30)
+            Robot::move_speed *= 0.75;
+          
+          if(my_abs(Robot::robot_x) > 40)
+          {
+            Robot::move_speed = constrain(30, 0, Robot::move_speed);           
+          }  
+          
+          if(Robot::robot_y > 185)
+            Robot::move_speed = constrain(40, 0, Robot::move_speed);
+        }
+        if(attacker_state == 2)
+        {
+          
+          if(attacker_2_state_trajectory_type == detour_trajectory)
+          {
+            Robot::enable_trajectory(false);
+            Robot::add_stop_to_route(Robot::robot_x, 100, 135 * my_sgn(Robot::robot_x), 0);
+            attacker_start_2_state_point.x = Robot::robot_x;
+            attacker_start_2_state_point.y = Robot::robot_y;
+            attacker_2_state_side = -1 * my_sgn(attacker_start_2_state_point.x);
+            attacker_2_state_trajectory_type = undefined_trajectory;
+          }
+          
+          if(attacker_2_state_trajectory_type == undefined_trajectory)
+          {
+            if(attacker_2_state_side != my_sgn(attacker_start_2_state_point.x))
+            {
+              Robot::add_stop_to_route(10 * my_sgn(attacker_start_2_state_point.x), 150, -90 * my_sgn(attacker_2_state_side), 0);
+              Robot::add_stop_to_route(30 * attacker_2_state_side, 150, 180, 0);             
+              attacker_2_state_trajectory_type = long_trajectory;
+            }
+            else
+            {
+              Robot::add_stop_to_route(
+            45 * my_sgn(attacker_2_state_side), 
+            attacker_start_2_state_point.y,
+            180 * my_sgn(attacker_2_state_side), 0);
+              
+              attacker_2_state_trajectory_type = short_trajectory;
+            }
+            
+            Robot::add_stop_to_route(Points::back_kick.x * my_sgn(attacker_2_state_side), Points::back_kick.y, Points::back_kick.angle * my_sgn(attacker_2_state_side), 2);
+            Robot::enable_trajectory(true);
+          }
+          
+          if(Robot::robot_position_diff > 6) attacker_start_detour_timer = Robot::time;
+          
+          if(Robot::time - attacker_start_detour_timer > 2000 && attacker_use_detour == 0) 
+          {
+            attacker_2_state_trajectory_type = detour_trajectory;
+            attacker_stop_detour_timer = Robot::time;
+            attacker_use_detour = 1;
+          }
+          else
+            attacker_use_detour = 0;
+          
+          if(Robot::get_trajectory_length() < 30)
+          {
+            Robot::changeSmoothness(2);
+            Robot::set_dribler_speed(130);
+            Robot::enable_game_zone_restriction(false);
+          }
+          else
+          {
+            Robot::changeSmoothness(0);
+            Robot::set_dribler_speed(120);
+            Robot::enable_game_zone_restriction(true);
+          }
+          
+          if(_aboba == true&&Robot::robot_y > 165)
+          {
+            if(Robot::robot_x > 0)
+              Robot::keck_new(right_solenoid, two_capasitors, 10);//6
+            else
+              Robot::keck_new(left_solenoid, two_capasitors, 20);
+            Robot::enable_trajectory(false);
+            attacker_state = 1;
+          }
+          
+          if(Robot::trajectory_finished)
+          {
+            Robot::changeSmoothness(2);
+            Robot::enable_game_zone_restriction(false);
+            Robot::enable_trajectory(false);
+            Robot::moveRobotAbs(0,0);
+            if(Robot::time % 10 <= 3)
+            {
+              _daleko = 1;
+              Robot::wait(100);
+              attacker_state = 4;
+              _attacker_4_tim = Robot::time;
+            }
+            else
+            {
+            Robot::set_dribler_speed(140, true);//160 400
+            if(Robot::robot_x > 0)
+              Robot::wait(300); 
+            else
+              Robot::wait(220);
+            if(Robot::time % 10 <= 3)
+            {
+            if(Robot::robot_x > 0)
+              Robot::keck_new(right_solenoid, two_capasitors, 4);//6
+            else
+              Robot::keck_new(left_solenoid, two_capasitors, 26);
+            }
+            Robot::wait(1);
+            Robot::set_dribler_speed(180, true);
+            Robot::wait(50);
+            Robot::moveRobotAbs(-90 * my_sgn(attacker_2_state_side), 70);
+            Robot::set_dribler_speed(130, true);
+            Robot::enable_game_zone_restriction(true);
+            Robot::wait(800, true, 40*my_sgn(Robot::robot_x), 5);
+            Robot::moveRobotAbs(0, 0);
+            Robot::wait(100);
+            Robot::enable_game_zone_restriction(false);
+            _daleko = 2;
+            attacker_state = 1;
+            }
+          }
+          attacker_old_state = 2;        
+        }
+        if(attacker_state == 3)
+        {
+          Robot::set_dribler_speed(90);
+          if(attacker_old_state != 3)
+          {
+            Robot::enable_trajectory(false);
+            Robot::add_stop_to_route(0,100,0,0);
+            Robot::add_stop_to_route(-20,80,0,0);
+            Robot::add_stop_to_route(-53,60,-35,2);
+            Robot::enable_trajectory(true);
+          }
+          
+          if(Robot::get_trajectory_length() < 30)
+            Robot::enable_game_zone_restriction(false);
+          if(Robot::trajectory_finished)
+          {
+            Robot::enable_game_zone_restriction(false);
+            Robot::enable_trajectory(false);
+            Robot::moveRobotAbs(0,0);
+            Robot::set_dribler_speed(25);
+            Robot::wait(1000); 
+            Robot::wait(1000, true, -40, 0.5, -40); 
+            Robot::keck_new(middle_solenoid, two_capasitors, 50);
+            attacker_state = 1;
+          }
+          attacker_old_state = 3;        
+        }
+        
+        if(attacker_state == 4)
+        {
+          attacker_old_state = 4;
+          Robot::set_dribler_speed(180, true);
+          Robot::enable_game_zone_restriction(false);
+          Robot::enable_trajectory(false);
+          Robot::moveRobotAbs(0,0);
+          Robot::wait(50);
+          if(_daleko !=0)
+            Robot::wait(800, true, Robot::forward_angle, 20, Robot::forward_angle);
+          else
+            Robot::wait(1500, true, Robot::forward_angle, 18, Robot::forward_angle);
+          _daleko = 0;
+          Robot::rotateRobot(0, 0);
+          Robot::wait(10);
+          Robot::keck_new(middle_solenoid, two_capasitors, 50);
+          attacker_state = 1;
+          spas = Robot::time;
+        }
+        
+        Robot::changeSmoothness(1);
+        
+        if(my_abs(Robot::robot_x) > 25)
+        {
+          Robot::move_speed = constrain(60, 0, Robot::move_speed);
+        }
+        
+        if(my_abs(Robot::robot_y) > 200)
+        {
+          Robot::move_speed = constrain(50, 0, Robot::move_speed);
+        }
+        
+        if(attacker_state != 255)
+        {
+        
+        if(Robot::robot_x > 38)
+        {
+          Robot::moveRobotAbs(-90, 15);
+          Robot::changeSmoothness(2);          
+        }
+          
+        if(Robot::robot_x < -35)
+        {
+          Robot::moveRobotAbs(90, 15);  
+          Robot::changeSmoothness(2);
+        }          
+          
+        if(Robot::robot_y > 207) 
+        {
+          Robot::moveRobotAbs(180, 15);
+          Robot::changeSmoothness(2);
+        }          
+          
+        if(Robot::robot_y < 27)
+        {
+          Robot::moveRobotAbs(0, 15);
+          Robot::changeSmoothness(2);
+        }          
+                  
+        if(Robot::robot_y > 185 && Robot::robot_x < 37 && Robot::robot_x > -37)
+        {
+          Robot::moveRobotAbs(180, 15); 
+          Robot::changeSmoothness(2);
+        }          
+         
+        if(Robot::robot_y < 45 && Robot::robot_x < 30 && Robot::robot_x > -30)
+        {
+          Robot::moveRobotAbs(0, 15);
+          Robot::changeSmoothness(2);
+        }
+      }
+      Robot::display_data(Robot::ball_loc_angle, Robot::move_angle); 
+      }
+      else if(role == 2)
+      { 
+        Robot::changeSmoothness(1);
+        Robot::enable_game_zone_restriction(false);
+        if(defender_state == 255)
+        {
+          Robot::moveRobot(0, 15);
+        }
+         if(defender_state == 1)
+         {
+           if(defender_old_state != 1)
+           {
+             defender_1_to_2_tim = Robot::time;
+           }
+           if(Robot::_dSSoft > 20 || Robot::ball_abs_y > 140 || Robot::ball_abs_y < 40 || defender_move_point_dist > 8) defender_1_to_2_tim = Robot::time;
+           
+           if(Robot::time - defender_1_to_2_tim > 2200 && 
+             (Robot::time - defender_2_to_1_tim > 5000))
+           {
+             defender_state = 2;
+             defender_2_to_1_tim = Robot::time;
+           }
+           
+         }      
+           
+         if(defender_state == 2)
+         {
+           Robot::enable_game_zone_restriction(true);
+           if(Robot::time - defender_2_to_1_tim > 3000)
+           {
+             defender_state = 1;
+             Robot::moveRobotAbs(0, 0);
+             Robot::set_dribler_speed(80);
+             Robot::wait(10);
+             Robot::wait(1000, true, Robot::forward_angle, 7, Robot::forward_angle);
+             Robot::keck_new(middle_solenoid, two_capasitors, 50);
+             defender_state = 1;
+             defender_old_state = 2;
+           }
+         }
+         
+         if(defender_state == 3)
+         {
+           if(Robot::robot_y > 55) defender_3_to_1_tim = Robot::time;
+           
+           if(Robot::time - defender_3_to_1_tim > 500)
+             defender_state = 1;
+         }
+         
+         if(defender_state == 1)
+         {
+           Robot::enable_game_zone_restriction(false);
+           
+           Robot::set_dribler_speed(0);
+           /*calculate all lines for defender geometry*/
+           
+           additional_defender_y = constrain(30, 0, Robot::ball_abs_y - (Points::defender_left_change_sector.y + 10));
+           
+           if(Robot::ball_seen_time > 1000)
+            additional_defender_y = 0;
+           defender_new_left_change_sector.x = Points::defender_left_change_sector.x;
+           defender_new_left_change_sector.y = additional_defender_y + Points::defender_left_change_sector.y;
+           
+           defender_new_right_change_sector.x = Points::defender_right_change_sector.x;
+           defender_new_right_change_sector.y = additional_defender_y + Points::defender_right_change_sector.y;
+           
+           defender_left_line = get_line_from_points(Points::defender_left_end, defender_new_left_change_sector);
+           defender_right_line = get_line_from_points(Points::defender_right_end, defender_new_right_change_sector);
+           defender_middle_line = get_line_from_points(defender_new_left_change_sector, defender_new_right_change_sector);
+           defender_ball_gate_line = get_line_from_points(ball_abs_position, Points::backward_gate);
+           
+           /*point to defy which defence sector to use*/
+           defender_middle_cross_point = find_lines_crosspoint(defender_ball_gate_line, defender_middle_line);
+           
+           /*choose defence sector*/
+           if(defender_middle_cross_point.x >= Points::defender_right_change_sector.x)
+           {
+             defender_defence_sector = right_sector;
+             defender_defence_point = find_lines_crosspoint(defender_ball_gate_line, defender_right_line);
+           }
+           else if(defender_middle_cross_point.x <= Points::defender_left_change_sector.x)
+           {
+             defender_defence_sector = left_sector;
+             defender_defence_point = find_lines_crosspoint(defender_ball_gate_line, defender_left_line);
+           }
+           else
+           {
+             defender_defence_sector = middle_sector;
+             defender_defence_point = find_lines_crosspoint(defender_ball_gate_line, defender_middle_line);
+           }
+           /*get current robot's sector*/
+           if(Robot::robot_x >= Points::defender_right_change_sector.x)
+             defender_move_sector = right_sector;
+           else if(Robot::robot_x <= Points::defender_left_change_sector.x)
+             defender_move_sector = left_sector;
+           else
+             defender_move_sector = middle_sector;
+           
+           if(Robot::ball_abs_x > 30 && Robot::ball_abs_y <= 25)
+           {
+             defender_defence_point = Points::defender_right_end;
+             defender_defence_sector = right_sector;
+           }
+           else if(Robot::ball_abs_x < -30 && Robot::ball_abs_y <= 18 )
+           {
+              defender_defence_point = Points::defender_left_end;
+              defender_defence_sector = left_sector;
+           }
+             
+           if(Robot::ball_seen_time > 1000)
+           {
+             if(Robot::ball_abs_x > 0)
+             {
+                defender_defence_point = Points::defender_no_ball_right_point;
+                defender_defence_sector = right_sector;          
+             }
+             else
+             {
+                defender_defence_sector = left_sector;  
+                defender_defence_point = Points::defender_no_ball_left_point;
+             }
+           }
+           
+           if(defender_move_sector == left_sector)
+           {
+              if(defender_defence_sector != left_sector)
+                defender_move_point = defender_new_left_change_sector;
+              else
+              {
+                defender_move_point = find_lines_crosspoint(defender_ball_gate_line, defender_left_line);
+                if(Robot::ball_seen_time > 1000)
+                  defender_move_point = defender_defence_point;
+              }
+           }          
+           else if(defender_move_sector == right_sector)
+           {
+              if(defender_defence_sector != right_sector)
+                defender_move_point = defender_new_right_change_sector;
+              else
+              {
+                defender_move_point = find_lines_crosspoint(defender_ball_gate_line, defender_right_line);
+                if(Robot::ball_seen_time > 1000)
+                  defender_move_point = defender_defence_point;
+              }
+           }
+           else if(defender_move_sector == middle_sector)
+           {
+              if(defender_defence_sector == right_sector)
+                defender_move_point = defender_new_right_change_sector;
+              else if(defender_defence_sector == left_sector)
+                defender_move_point = defender_new_left_change_sector;
+              else
+              {
+                defender_move_point = defender_middle_cross_point;
+                if(Robot::ball_seen_time > 1000)
+                  defender_move_point = defender_defence_point;
+              }
+           }
+           if(Robot::ball_seen_time > 1000)
+           {
+             if(Robot::ball_abs_x > 0)
+             {
+                defender_move_point = Points::defender_no_ball_right_point;
+                defender_defence_sector = right_sector;          
+             }
+             else
+             {
+                defender_defence_sector = left_sector;  
+                defender_move_point = Points::defender_no_ball_left_point;
+             }
+           }
+           defender_move_point_dist = Robot::getDistanceToPoint(defender_defence_point);
+           defender_move_speed = new_defender_velocity(defender_move_point_dist);
+           
+           if(Robot::ball_seen_time > 1000)
+             defender_move_speed = 20;
+           
+           if(defender_move_point_dist < 3)
+              defender_move_speed = 0;
+           if(Robot::robot_y < 30)
+           {
+             if(Robot::robot_x > 0 && Robot::ball_abs_angle > 30)
+               defender_move_speed = constrain(20, 0, defender_move_speed);
+             else if(Robot::robot_x < 0 && Robot::ball_abs_angle < -30)
+               defender_move_speed = constrain(20, 0, defender_move_speed);
+           }
+           Robot::moveRobotAbs(Robot::getAngleToPoint(defender_move_point), defender_move_speed);
+           Robot::setAngle(0, 20.0, 0.045, -0.001, 0.08);
+           
+           if(Robot::robot_y < 22)
+                 Robot::moveRobotAbs(0, 10);
+           
+           if(Robot::robot_y > 60)
+           {
+            Robot::enable_game_zone_restriction(true);
+            if(lead_to_degree_borders(Robot::getAngleToPoint(Robot::ball_abs_position) - Robot::getAngleToPoint(Points::gate_left_point)) < 0 &&
+               lead_to_degree_borders(Robot::getAngleToPoint(Robot::ball_abs_position) - Robot::getAngleToPoint(Points::gate_right_point)) > 0)
+            {
+               defender_detour_left_point.x = Robot::ball_abs_x - 25;
+               defender_detour_left_point.y = Robot::ball_abs_y;
+                
+               defender_detour_right_point.x = Robot::ball_abs_x + 25;
+               defender_detour_right_point.y = Robot::ball_abs_y; 
+
+               if(defender_detour_left_point.x < -50)
+                 defender_detour_point.x = defender_detour_right_point.x;
+               else if(defender_detour_right_point.x > 50)
+                 defender_detour_point.x = defender_detour_left_point.x;
+               else
+               {
+                 if(Robot::getDistanceToPoint(defender_detour_right_point) < Robot::getDistanceToPoint(defender_detour_left_point))
+                     defender_detour_point.x = defender_detour_right_point.x;
+                 else
+                     defender_detour_point.x = defender_detour_left_point.x;
+               }
+               defender_detour_point.y = Robot::ball_abs_y;
+               Robot::setAngle(0,  20.0, 0.2, -0.1, 0.05);
+               Robot::moveToPoint(defender_detour_point, 25, 255, 100, 0);
+            }
+          }
+         }       
+         else if(defender_state == 2)
+         {
+           defender_move_speed = constrain(8, 4, Robot::ball_distance * 0.25);
+           if(Robot::ball_loc_angle > 30)
+             defender_move_speed *= 0.75;
+           Robot::moveRobotAbs(Robot::ball_abs_angle, 10);
+           Robot::setAngle(Robot::ball_abs_angle, 7.0, 0.045, -0.001, 0.08);
+           Robot::set_dribler_speed(80);
+         }
+         else if(defender_state == 3)
+         {
+           defender_detour_point = find_vector_circle_cross_points(defender_gate_circle, 
+           Robot::ball_abs_position);
+           Robot::moveToPoint(defender_detour_point, 30, 255, 100, 0);
+           Robot::setAngle(lead_to_degree_borders(Robot::backward_angle + 180),
+           20.0, 0.045, -0.001, 0.08);
+         }
+         Robot::display_data(defender_ball_gate_line.a * 10, defender_ball_gate_line.c);
+      }
+      if(Robot::ball_seen_time > 1000)
+        additional_defender_y = constrain(10, 0, additional_defender_y);
+    }
+    defender_old_state = defender_state;
+    
+    Robot::update();
+  }
+}
