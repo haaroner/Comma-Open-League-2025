@@ -23,6 +23,7 @@
 ".\objects\line.o"
 ".\objects\spi_dot.o"
 ".\objects\spi3_dot.o"
+".\objects\spi1_dot.o"
 ".\objects\irlocator.o"
 ".\objects\kicker.o"
 ".\objects\tssp.o"

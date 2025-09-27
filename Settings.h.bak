@@ -5,7 +5,7 @@
 #define OTLADKA false
 #define USE_MOTORS true
 #define USE_DISPLAY true
-#define USE_DRIBLER true
+#define USE_DRIBLER false
 #define USE_FRONT_CAMERA false
   //////////////////////////////////
 
@@ -31,9 +31,9 @@
 //all speeds are in %, you can change in anyway you want
 //in Tomsk linear speeds were almost 2 times higher
 #define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 80//30
-#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 25//15
-#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 8//7
-#define ATTACKER_TRAJECTORY_ACCELERATION 1.65
+#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 20//15
+#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 7//7
+#define ATTACKER_TRAJECTORY_ACCELERATION 1.5
 
 /////////////////////////////////////////////////////////////////////
 

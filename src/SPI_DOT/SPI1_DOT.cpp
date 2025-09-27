@@ -1,10 +1,10 @@
-#include "SPI2_DOT.h"
+#include "SPI1_DOT.h"
 
-//uint16_t _RxData[2];
-//bool _available[2];
-//uint8_t num = 1;
+uint16_t _RxData[2];
+bool _available[2];
+uint8_t num = 1;
 
-void initSPI2(bool mode, uint8_t dataFrameFormat, uint16_t clkPrescaler)
+void initSPI1(bool mode, uint8_t dataFrameFormat, uint16_t clkPrescaler)
 {
   _RxData[num] = 0;														
 	_available[num] = 0;
@@ -12,8 +12,8 @@ void initSPI2(bool mode, uint8_t dataFrameFormat, uint16_t clkPrescaler)
 	SPI_TypeDef *spi;
 	uint8_t afNumber = 5;
   
-  spi = SPI2;
-	RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+  spi = SPI1;
+	RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
 
   if(mode == 1)
   {
@@ -49,18 +49,18 @@ void initSPI2(bool mode, uint8_t dataFrameFormat, uint16_t clkPrescaler)
 }
 
 
-//uint16_t writeSPI(uint16_t TxData){						//for master
-//	
-//	//select SPI register name
-//	SPI_TypeDef * spi;								
-//	spi = SPI2;
-//	
-//	//write data
-//	while(!(spi->SR & SPI_SR_TXE));		
-//	spi->DR = TxData;
-//	
-//	//read data
-//	while(!(spi->SR & SPI_SR_RXNE));
-//	return spi->DR;		
-//	
-//}
+uint16_t writeSPI(uint16_t TxData){						//for master
+	
+	//select SPI register name
+	SPI_TypeDef * spi;								
+	spi = SPI1;
+	
+	//write data
+	while(!(spi->SR & SPI_SR_TXE));		
+	spi->DR = TxData;
+	
+	//read data
+	while(!(spi->SR & SPI_SR_RXNE));
+	return spi->DR;		
+	
+}

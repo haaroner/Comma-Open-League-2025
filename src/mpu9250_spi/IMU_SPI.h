@@ -3,7 +3,7 @@
 
 #include "project_config.h"
 #include "mpu9250_spi.h"
-#include "SPI2_DOT.h"
+#include "SPI1_DOT.h"
 
 
 class IMU
@@ -14,7 +14,7 @@ class IMU
 		void setZeroAngle();
 		void calibrate(uint32_t t);
 		unsigned int update();
-		void updateAnglesFromFIFO();
+		volatile void updateAnglesFromFIFO();
 		double getAngle();
 		double imuFloatValue, angleChange;
 		long long int imuFloatTime;
@@ -67,7 +67,7 @@ unsigned int IMU::update()
 }
 
 
-void IMU::updateAnglesFromFIFO()
+volatile void IMU::updateAnglesFromFIFO()
 {
 	_mpuSensor.updateAnglesFromFIFO();
 }

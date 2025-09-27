@@ -1,6 +1,8 @@
 #include "Robot.h"
 #include "Settings.h"
-
+//#include <iostream>
+//#include <vector>
+//std::vector<int> data(1, 2);
 uint8_t attacker_state, attacker_old_state = 1, attacker_state1_tim = 0;
 uint8_t defender_state = 1, defender_old_state = 0;
 uint8_t defender_defence_sector, defender_move_sector;
@@ -39,6 +41,8 @@ bool _aboba = false;
 uint8_t test_dribler_speed = 0, to_keck = 0, test_stop_dribler_speed = 0;
 uint32_t _test_dribler_power = 5, test_stop_time = 5;
 uint32_t spas = 0;
+int arr[] = {200};
+
 int main()
 {
   
@@ -129,11 +133,12 @@ int main()
       attacker_old_state = 0;
       defender_state = 1;
       defender_old_state = 0;
-      Robot::display_data(Robot::is_ball_captured(), my_abs(Robot::_ball_sen_high_data - Robot::_ball_sen_low_data));
+      Robot::display_data(Robot::loop_delay);
+      //Robot::display_data(Robot::is_ball_captured(), my_abs(Robot::_ball_sen_high_data - Robot::_ball_sen_low_data));
     }
     else if(gaming_state == 1)
     {
-      if(role == 1)
+      if(role == 3)
       {
         if((!Robot::is_ball_captured()))
         {
@@ -168,7 +173,7 @@ int main()
           }
         }
       }
-      if(role == 3)
+      if(role == 1)
       {
         Robot::enable_game_zone_restriction(false);
         
@@ -204,10 +209,6 @@ int main()
             Robot::wait(750);
             Robot::set_dribler_speed(100, true);
             attacker_state = 2;
-              if(Robot::time%10 <=8)
-                _aboba = true;
-              else
-                _aboba = false;
             }
             else
             {
@@ -348,24 +349,14 @@ int main()
           if(Robot::get_trajectory_length() < 30)
           {
             Robot::changeSmoothness(2);
-            Robot::set_dribler_speed(130);
+            Robot::set_dribler_speed(90);
             Robot::enable_game_zone_restriction(false);
           }
           else
           {
             Robot::changeSmoothness(0);
-            Robot::set_dribler_speed(120);
+            Robot::set_dribler_speed(90);
             Robot::enable_game_zone_restriction(true);
-          }
-          
-          if(_aboba == true&&Robot::robot_y > 165)
-          {
-            if(Robot::robot_x > 0)
-              Robot::keck_new(right_solenoid, two_capasitors, 10);//6
-            else
-              Robot::keck_new(left_solenoid, two_capasitors, 20);
-            Robot::enable_trajectory(false);
-            attacker_state = 1;
           }
           
           if(Robot::trajectory_finished)
@@ -383,31 +374,31 @@ int main()
             }
             else
             {
-            Robot::set_dribler_speed(140, true);//160 400
-            if(Robot::robot_x > 0)
-              Robot::wait(300); 
-            else
-              Robot::wait(220);
-            if(Robot::time % 10 <= 3)
-            {
-            if(Robot::robot_x > 0)
-              Robot::keck_new(right_solenoid, two_capasitors, 4);//6
-            else
-              Robot::keck_new(left_solenoid, two_capasitors, 26);
+              Robot::set_dribler_speed(140, true);//160 400
+              if(Robot::robot_x > 0)
+                Robot::wait(300); 
+              else
+                Robot::wait(300);
+              if(Robot::robot_x > 0)
+                Robot::keck_new(right_solenoid, two_capasitors, 20);//6
+              else
+                Robot::keck_new(left_solenoid, two_capasitors, 6);
+              
+              Robot::moveRobotAbs(-90 * my_sgn(attacker_2_state_side), 70);
+              Robot::wait(500);
             }
-            Robot::wait(1);
-            Robot::set_dribler_speed(180, true);
-            Robot::wait(50);
-            Robot::moveRobotAbs(-90 * my_sgn(attacker_2_state_side), 70);
-            Robot::set_dribler_speed(130, true);
-            Robot::enable_game_zone_restriction(true);
-            Robot::wait(800, true, 40*my_sgn(Robot::robot_x), 5);
-            Robot::moveRobotAbs(0, 0);
-            Robot::wait(100);
+//            Robot::wait(1);
+//            Robot::set_dribler_speed(180, true);
+//            Robot::wait(50);
+//            Robot::moveRobotAbs(-90 * my_sgn(attacker_2_state_side), 70);
+//            Robot::set_dribler_speed(130, true);
+//            Robot::enable_game_zone_restriction(true);
+//            Robot::wait(800, true, 40*my_sgn(Robot::robot_x), 5);
+//            Robot::moveRobotAbs(0, 0);
+//            Robot::wait(100);
             Robot::enable_game_zone_restriction(false);
             _daleko = 2;
             attacker_state = 1;
-            }
           }
           attacker_old_state = 2;        
         }

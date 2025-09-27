@@ -313,8 +313,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>0</Optim>
-            <oTime>0</oTime>
+            <Optim>3</Optim>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
@@ -322,11 +322,11 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>1</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>0</uGnu>
+            <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
             <v6LangP>3</v6LangP>
@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HSE, STM32F407xx,STM32F40_41xxx, USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,HSE_VALUE = 8000000</Define>
+              <Define>USE_HSE, STM32F407xx,STM32F40_41xxx, USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,HSE_VALUE = 8000000, UMBA_DONT_USE_RETARGET</Define>
               <Undefine></Undefine>
               <IncludePath>.\src\main;.\src\external;.\src\spl4;.\src\global_macros;.\src\spl4\inc;.\src\spl4\src;.\src\support_pacage\inc;.\src\support_pacage\arm;.\src\support_pacage\gcc;.\src\support_pacage\gcc\linker;.\src\support_pacage;.\src\cmsis;.\src\OpenMV;.\src\pin_setup;.\src\motor;.\src\motors;.\src\IRLocator;.\src\time_service;.\src\kicker;.\src\i2c;.\src\SPI;.\src\ball_detour;.\src\UART;.\src\robot_math;.\src\dribler;.\src\adc;.\src\dma;.\src\main;.\src\voltmeter;.\src\mpu9250_spi;.\src\SPI_DOT;.\src\UART\usart2;.\src\UART\usart3;.\src\UART\usart6;.\src\Robot;.\src\TSSP;.\src\Actions;.\src\Queue;.\src\Display\SSD1306;.\src\Display;.\src\flashka;.\src\usartik1;.\src\Field;.\src\UART\usart2;.\src\BLDC_Motor;.\src\Utilities;..\Comma-Open-League-2025-main</IncludePath>
             </VariousControls>
@@ -750,6 +750,16 @@
               <FileName>SPI3_DOT.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\src\SPI_DOT\SPI3_DOT.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>SPI1_DOT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\SPI_DOT\SPI1_DOT.h</FilePath>
+            </File>
+            <File>
+              <FileName>SPI1_DOT.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\SPI_DOT\SPI1_DOT.cpp</FilePath>
             </File>
           </Files>
         </Group>

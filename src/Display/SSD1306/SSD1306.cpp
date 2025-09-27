@@ -117,7 +117,7 @@ void SSD1306::begin(uint8_t vccstate, bool reset) {
   //initPin(cs, OUTPUTPP);
 
 	//initSPI(spiNum, MASTER, 8, 2, cs, sck, -1, mosi);
-  initSPI3(1, 8, 64);
+  initSPI3(1, 8, 2);
   
   // Setup reset pin direction (used by both SPI and I2C)
   //initPin(rst, OUTPUTPP);

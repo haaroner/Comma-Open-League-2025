@@ -55,6 +55,11 @@ namespace Robot
   pin usart2_tx('A', 2, uart2);
   pin usart2_rx('A', 3, uart2);
   
+  pin spi1_mosi('A', 7, spi1);
+  pin spi1_miso('A', 6, spi1);
+  pin spi1_sck('A', 5, spi1);
+  pin spi1_ck ('A', 4, write_DOWN);
+  
   pin ball_sen_adc('B', 0, adc);
   pin ball_led_adc('E', 2, write_);
   
@@ -70,6 +75,9 @@ namespace Robot
   
   pin kecker_kick('B', 4, write_);
   pin Kecker('E', 9, write_);
+  
+  mpu9250_spi mpu_sensor(spi1_ck);
+  IMU mpu(mpu_sensor);
   
   //pin ball_sen_adc('A', 3, adc);
   
@@ -209,12 +217,12 @@ namespace Robot
   
   void init_robot(uint8_t __role = 1)
   { 
-    time_service::startTime_DOT();
+    //time_service::startTime_DOT();
     time_service::init();
     time_service::startTime();
     Robot::spi2_mosi.resetBit();
     Robot::spi2_miso.resetBit();
-    
+    mpu.init();
     
     
     //Kecker.resetBit();
@@ -797,16 +805,16 @@ namespace Robot
     if(my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)
             Robot::move_speed *= 0.75;
     
-    if(((point_distance > 8  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 30)&& _point.significanse == 2) || 
-       (point_distance > 18  && _point.significanse == 1) ||
-       (point_distance > 35 && _point.significanse == 0)) 
+    if(((point_distance > 7  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 30)&& _point.significanse == 2) || 
+       (point_distance > 12  && _point.significanse == 1) ||
+       (point_distance > 25 && _point.significanse == 0)) 
       point_reached_timer = time_service::getCurTime();
     
-    point_reached = time_service::getCurTime() - point_reached_timer > 100;
+    point_reached = time_service::getCurTime() - point_reached_timer > 500;
     
     otladka1 = int(point_reached_timer / 1000);
     
-    return time_service::getCurTime() - point_reached_timer > 100 && my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20;
+    return (time_service::getCurTime() - point_reached_timer > 400) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
   }
   
   bool moveToPoint(int _x, int _y, int16_t _speed,  int16_t _x0_angle = -255)
@@ -968,11 +976,13 @@ namespace Robot
   {
    // motors.moveRobot(0, 0, 0, 0, 0, 0);
     control_led(2, ON);
-    wait(500);
+    wait(1000);
     //mpu.calibrate(1000);
     //mpu.setZeroAngle();
     while(usart6::available() == 0);
     gyro_zero_angle = lead_to_degree_borders((usart6::read() * 2));
+    //mpu.calibrate(200);
+    //mpu.setZeroAngle();
     control_led(2, OFF);
    // motors_on_off(OFF);
     is_callibrated = true;
@@ -1098,7 +1108,7 @@ namespace Robot
   }
    void change_game_state()
   {
-    Robot::wait(5000);
+    Robot::wait(50);
     
    // if(is_callibrated)
       _game_state = my_abs(_game_state - 1);
@@ -1166,8 +1176,12 @@ namespace Robot
             case 1: change_side(); break;
             case 2: change_game_state(); break;
             case 3:  
-            wait(1000);
-            keck_new(left_solenoid, two_capasitors, 10); 
+            //keck_new(middle_solenoid, two_capasitors, 50);            
+            //time_service::delay_ms(5000);
+            keck_new(right_solenoid, two_capasitors, 50);
+            time_service::delay_ms(10000);
+            keck_new(left_solenoid, two_capasitors, 50);
+           
             wait(1000);
             break;
             case 4: 
@@ -1264,6 +1278,7 @@ namespace Robot
     loop_delay = time - old_time;
     
     //mpu.update();
+    //gyro = mpu.getAngle();
    if(usart6::available() > 0)
     gyro = lead_to_degree_borders((usart6::read() * 2) - gyro_zero_angle);//lead_to_degree_borders(mpu.getAngle());
    // ball.get_data();

@@ -117,7 +117,7 @@ void SSD1306::begin(uint8_t vccstate, bool reset) {
   //initPin(cs, OUTPUTPP);
 
 	//initSPI(spiNum, MASTER, 8, 2, cs, sck, -1, mosi);
-  initSPI3(1, 8, 1);
+  initSPI3(1, 8, 64);
   
   // Setup reset pin direction (used by both SPI and I2C)
   //initPin(rst, OUTPUTPP);
@@ -321,9 +321,6 @@ void SSD1306::dim(bool dim) {
 }
 
 void SSD1306::display() {
-  ssd1306_command(SSD1306_DISPLAYOFF);
-  for(int i = 0; i < 35; i++);
-  ssd1306_command(SSD1306_DISPLAYON);
   ssd1306_command(SSD1306_COLUMNADDR);
   ssd1306_command(0);   // Column start address (0 = reset)
   ssd1306_command(SSD1306_LCDWIDTH-1); // Column end address (127 = reset)

@@ -5,7 +5,7 @@
 
 #include "math.h"
 
-#include "SPI2_DOT.h"
+#include "SPI1_DOT.h"
 #include "pin_setup.h"
 #include "mpu9250_registers_spi.h"
 #include "time_service.h"
@@ -14,8 +14,9 @@
 #define RAD2DEG	57.2957795130823208767
 #define DEG2RAD	0.01745329251994329576
 
-#define ACC_FS 4				//+-2g, +-4g, +-8g, +-16g				select accelerometer and gyroscope full-scale range
+#define ACC_FS 8				//+-2g, +-4g, +-8g, +-16g				select accelerometer and gyroscope full-scale range
 #define GYRO_FS 2000		//+-250°/s, +-500°/s, +-1000°/s, +-2000°/s
+#define MAG_OUTPUT_BITS 16 // 14b, 16b
 
 #define CFG_8                   (2718)
 #define CFG_6                   (2753)

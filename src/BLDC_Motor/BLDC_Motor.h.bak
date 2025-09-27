@@ -98,6 +98,7 @@ class BLDC
   private:
     void send_command(char ID, int32_t command, char STOP)
     {
+      return;
       uint8_t _data = 0;
       usart3::write(ID);
       char _sgn = 1;
@@ -159,8 +160,8 @@ class BLDC
       else
       {
         usart3::write('0');
-        //usart3::write('.');
-        //usart3::write('0');
+        usart3::write('.');
+        usart3::write('0');
       }
       
       usart3::write(STOP);

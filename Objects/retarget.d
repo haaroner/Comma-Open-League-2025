@@ -40,7 +40,3 @@
 .\objects\retarget.o: .\src\main\project_config.h
 .\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\math.h
 .\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\string.h
-.\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\rt_sys.h
-.\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\rt_misc.h
-.\objects\retarget.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\stddef.h

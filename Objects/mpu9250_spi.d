@@ -1,7 +1,7 @@
 .\objects\mpu9250_spi.o: src\mpu9250_spi\mpu9250_spi.cpp
 .\objects\mpu9250_spi.o: src\mpu9250_spi\mpu9250_spi.h
 .\objects\mpu9250_spi.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\math.h
-.\objects\mpu9250_spi.o: .\src\SPI_DOT\SPI2_DOT.h
+.\objects\mpu9250_spi.o: .\src\SPI_DOT\SPI1_DOT.h
 .\objects\mpu9250_spi.o: .\src\main\project_config.h
 .\objects\mpu9250_spi.o: .\src\global_macros\global_macros.h
 .\objects\mpu9250_spi.o: .\src\spl4\inc\stm32f4xx_rcc.h

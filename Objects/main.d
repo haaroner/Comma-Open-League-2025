@@ -84,10 +84,10 @@
 .\objects\main.o: .\src\mpu9250_spi\IMU_SPI.h
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\mpu9250_spi\mpu9250_spi.h
-.\objects\main.o: .\src\SPI_DOT\SPI2_DOT.h
+.\objects\main.o: .\src\SPI_DOT\SPI1_DOT.h
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\mpu9250_spi\mpu9250_registers_spi.h
-.\objects\main.o: .\src\SPI_DOT\SPI2_DOT.h
+.\objects\main.o: .\src\SPI_DOT\SPI1_DOT.h
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\robot_math\Timers.h
 .\objects\main.o: .\src\robot_math\PID.h

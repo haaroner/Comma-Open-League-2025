@@ -1,11 +1,11 @@
+
 //for stm32f407!!!
 
 #include "mpu9250_spi.h"
 
 #define RAD2DEG	57.2957795130823208767
 #define DEG2RAD	0.01745329251994329576
-#define beta		0.28f		// 2 * proportional gain 0.25f 0.29f
-#define start_beta 5.0f 
+#define beta		1.2f		// 2 * proportional gain 0.25f
 
 mpu9250_spi::mpu9250_spi(pin &ss):_ss(ss)
 {}
@@ -81,7 +81,7 @@ void mpu9250_spi::initIMU()
 	else if(GYRO_FS == 2000) gyroFSsel = 0x18;
 
 		
-	initSPI2(1, 8, 128);			//init spi
+	initSPI1(1, 8, 2);			//init spi
 	//initPin(mpuSSPin, OUTPUTPP);!!!!!!!!!!!!
 	//setPin(mpuSSPin, 1);
   _ss.setBit();
@@ -304,22 +304,12 @@ void mpu9250_spi::MadgwickAHRSupdateIMU(double _time)
 		s1 *= recipNorm;
 		s2 *= recipNorm;
 		s3 *= recipNorm;
-    if(time_service::getCurTime() > 650)
-    {
-      // Apply feedback stepcorrect
-      qDot1 -= beta * s0;
-      qDot2 -= beta * s1;
-      qDot3 -= beta * s2;
-      qDot4 -= beta * s3;
-    }
-    else
-    {
-      // Apply feedback stepcorrect
-      qDot1 -= start_beta * s0;
-      qDot2 -= start_beta * s1;
-      qDot3 -= start_beta * s2;
-      qDot4 -= start_beta * s3;
-    }
+
+		// Apply feedback stepcorrect
+		qDot1 -= beta * s0;
+		qDot2 -= beta * s1;
+		qDot3 -= beta * s2;
+		qDot4 -= beta * s3;
 	}
 
 	// Integrate rate of change of quaternion to yield quaternion
@@ -340,6 +330,7 @@ void mpu9250_spi::MadgwickAHRSupdateIMU(double _time)
 
 float mpu9250_spi::invSqrt(float x)
 {
+  return 1/_sqrt(x);
 	float halfx = 0.5f * x;
 	float y = x;
 	long i = *(long*)&y;
@@ -358,7 +349,7 @@ void mpu9250_spi::updateAngles(double _time, bool flag1)
 		_time = double(time_service::getCurTime() - time) / 1000;
     _additional_time = _time;
 		time = time_service::getCurTime();
-		if(_time > 2) _time = 2;
+		if(_time > 1) _time = 0;
 	}
 	
 	if(flag1)
@@ -399,7 +390,7 @@ void mpu9250_spi::updateAnglesFromFIFO()
 	for(int i = 0; i < FIFOsize; i++)
 	{
 		//readFIFO();
-		updateAngles(-1, 1);			//0.001s because gyro and acc sample rate is 1 kHz
+		updateAngles(0.007, 1);			//0.001s because gyro and acc sample rate is 1 kHz
 	}	
 }
 
