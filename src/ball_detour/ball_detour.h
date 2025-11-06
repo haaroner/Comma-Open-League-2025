@@ -52,6 +52,24 @@ float new_velocity(int _ball_dist)
     return Points::speed_3.y;
 }
 
+
+/*calculates velocity depending on position of robot snd ball*/
+//needs ball_distance and local angle
+float fixed_velocity(int _ball_dist, int _ball_angle)
+{
+  float result_speed_a, result_speed;
+  result_speed_a = Points::a_min.y + constrainf(1.0f, 0.0f, my_abs(30 - _ball_angle)/20) * (Points::a_max.y - Points::a_min.y);
+  if(_ball_dist <= Points::a_min.x)
+  {   
+    return get_y_from_line(get_line_from_points(point(0, 10), point((int)Points::a_min.x, (int)result_speed_a)), _ball_dist);
+  }
+  else
+  {
+    result_speed = Points::b_min.y + constrainf(1.0f, 0.0f, my_abs(40 - _ball_angle)/20) * (Points::b_max.y - Points::b_min.y);
+    return get_y_from_line(get_line_from_points(point((int)Points::a_min.x, (int)result_speed_a), point((int)Points::b_min.x, (int)result_speed)), _ball_dist);
+  }
+}
+
 float new_defender_velocity(int _dist)
 {
   float _result_speed;

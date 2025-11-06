@@ -1,11 +1,11 @@
-
 //for stm32f407!!!
 
 #include "mpu9250_spi.h"
 
 #define RAD2DEG	57.2957795130823208767
 #define DEG2RAD	0.01745329251994329576
-#define beta		1.2f		// 2 * proportional gain 0.25f
+#define beta		0.28f		// 2 * proportional gain 0.25f 0.29f
+#define start_beta 5.0f 
 
 mpu9250_spi::mpu9250_spi(pin &ss):_ss(ss)
 {}
@@ -304,12 +304,22 @@ void mpu9250_spi::MadgwickAHRSupdateIMU(double _time)
 		s1 *= recipNorm;
 		s2 *= recipNorm;
 		s3 *= recipNorm;
-
-		// Apply feedback stepcorrect
-		qDot1 -= beta * s0;
-		qDot2 -= beta * s1;
-		qDot3 -= beta * s2;
-		qDot4 -= beta * s3;
+    if(time_service::getCurTime() > 650)
+    {
+      // Apply feedback stepcorrect
+      qDot1 -= beta * s0;
+      qDot2 -= beta * s1;
+      qDot3 -= beta * s2;
+      qDot4 -= beta * s3;
+    }
+    else
+    {
+      // Apply feedback stepcorrect
+      qDot1 -= start_beta * s0;
+      qDot2 -= start_beta * s1;
+      qDot3 -= start_beta * s2;
+      qDot4 -= start_beta * s3;
+    }
 	}
 
 	// Integrate rate of change of quaternion to yield quaternion
@@ -330,7 +340,6 @@ void mpu9250_spi::MadgwickAHRSupdateIMU(double _time)
 
 float mpu9250_spi::invSqrt(float x)
 {
-  return 1/_sqrt(x);
 	float halfx = 0.5f * x;
 	float y = x;
 	long i = *(long*)&y;
@@ -349,7 +358,7 @@ void mpu9250_spi::updateAngles(double _time, bool flag1)
 		_time = double(time_service::getCurTime() - time) / 1000;
     _additional_time = _time;
 		time = time_service::getCurTime();
-		if(_time > 1) _time = 0;
+		if(_time > 1) _time = 1;
 	}
 	
 	if(flag1)

@@ -14,7 +14,7 @@
 #define RAD2DEG	57.2957795130823208767
 #define DEG2RAD	0.01745329251994329576
 
-#define ACC_FS 4				//+-2g, +-4g, +-8g, +-16g				select accelerometer and gyroscope full-scale range
+#define ACC_FS 8				//+-2g, +-4g, +-8g, +-16g				select accelerometer and gyroscope full-scale range
 #define GYRO_FS 2000		//+-250°/s, +-500°/s, +-1000°/s, +-2000°/s
 #define MAG_OUTPUT_BITS 16 // 14b, 16b
 
@@ -242,6 +242,7 @@ public:
   mpu9250_spi(pin &ss);
 	volatile double xa, ya, za;
 	volatile double xg, yg, zg;
+  volatile double xm, ym, zm;
 	volatile double temp;
 	double q0, q1, q2, q3;
 	double pitch, roll, yaw;
@@ -252,6 +253,7 @@ public:
 	void initIMU();
 	void readAcc();
 	void readGyro();
+  void readMag();
 	void readTemp();
 	int readFIFOsize();
 	void readFIFO();
@@ -269,6 +271,9 @@ public:
 	double getXg();
 	double getYg();
 	double getZg();
+  double getXm();
+  double getYm();
+  double getZm();
 	double xGyroOffset, yGyroOffset, zGyroOffset;
 	double xAccOffset, yAccOffset, zAccOffset;
   int read_gyro_fs_sel();
@@ -291,6 +296,8 @@ private:
 	inline int convert(uint16_t msb, uint8_t lsb);
 	int readReg(int regAddr, int * data = 0, int q = 0);
 	void writeReg(int regAddr, uint8_t data);
+  void writeMagReg(uint8_t reg, uint8_t data);
+  uint8_t readMagReg(uint8_t reg);
 	float qToFloat(long number, unsigned char q);
 	void computeEulerAngles(bool degrees);
 };

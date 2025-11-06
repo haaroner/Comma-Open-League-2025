@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -322,7 +322,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>1</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HSE, STM32F407xx,STM32F40_41xxx, USE_STDPERIPH_DRIVER,USE_FULL_ASSERT,HSE_VALUE = 8000000, UMBA_DONT_USE_RETARGET</Define>
               <Undefine></Undefine>
-              <IncludePath>.\src\main;.\src\external;.\src\spl4;.\src\global_macros;.\src\spl4\inc;.\src\spl4\src;.\src\support_pacage\inc;.\src\support_pacage\arm;.\src\support_pacage\gcc;.\src\support_pacage\gcc\linker;.\src\support_pacage;.\src\cmsis;.\src\OpenMV;.\src\pin_setup;.\src\motor;.\src\motors;.\src\IRLocator;.\src\time_service;.\src\kicker;.\src\i2c;.\src\SPI;.\src\ball_detour;.\src\UART;.\src\robot_math;.\src\dribler;.\src\adc;.\src\dma;.\src\main;.\src\voltmeter;.\src\mpu9250_spi;.\src\SPI_DOT;.\src\UART\usart2;.\src\UART\usart3;.\src\UART\usart6;.\src\Robot;.\src\TSSP;.\src\Actions;.\src\Queue;.\src\Display\SSD1306;.\src\Display;.\src\flashka;.\src\usartik1;.\src\Field;.\src\UART\usart2;.\src\BLDC_Motor;.\src\Utilities;..\Comma-Open-League-2025-main</IncludePath>
+              <IncludePath>.\src\main;.\src\external;.\src\spl4;.\src\global_macros;.\src\spl4\inc;.\src\spl4\src;.\src\support_pacage\inc;.\src\support_pacage\arm;.\src\support_pacage\gcc;.\src\support_pacage\gcc\linker;.\src\support_pacage;.\src\cmsis;.\src\OpenMV;.\src\pin_setup;.\src\motor;.\src\motors;.\src\IRLocator;.\src\time_service;.\src\kicker;.\src\i2c;.\src\SPI;.\src\ball_detour;.\src\UART;.\src\robot_math;.\src\dribler;.\src\adc;.\src\dma;.\src\main;.\src\voltmeter;.\src\mpu9250_spi;.\src\SPI_DOT;.\src\UART\usart2;.\src\UART\usart3;.\src\UART\usart6;.\src\Robot;.\src\TSSP;.\src\Actions;.\src\Queue;.\src\Display\SSD1306;.\src\Display;.\src\flashka;.\src\usartik1;.\src\Field;.\src\UART\usart2;.\src\BLDC_Motor;.\src\Utilities;..\Comma-Open-League-2025-main;.\src\DMP_research;.\src\DMP_research\src;.\src\DMP_research\src\util;.\src\BNO055</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -980,6 +980,21 @@
               <FileName>Points.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\Utilities\Points.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BNO055</GroupName>
+          <Files>
+            <File>
+              <FileName>BNO055.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\BNO055\BNO055.h</FilePath>
+            </File>
+            <File>
+              <FileName>BNO055.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\BNO055\BNO055.cpp</FilePath>
             </File>
           </Files>
         </Group>

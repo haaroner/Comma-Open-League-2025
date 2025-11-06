@@ -8,37 +8,41 @@ callibrate_center = False
 blue_x_test = 0
 blue_y_test = 0
 
-center1 = [163, 112]#[176, 130]
+center1 = [160, 118]#[176, 130]
 center2 = [163, 116]#[162, 118]
 
-robot = 2
+robot = 1
 if robot == 1 or robot == 3:#attacker
 
-    yellow_threshold = [(0, 100, -128, 34, 30, 127)]
-    blue_threshold = [(0, 100, -128, 127, -128, -33)]
-    red_threshold = [(0, 100, 43, 127, -2, 127)]#(62, 100, 46, 127, -128, 40)
+    yellow_threshold = [(0, 100, -2, 127, 17, 127)]
+    blue_threshold = [(39, 100, -63, 4, -128, -5)]
+    red_threshold = [(67, 100, 17, 127, -128, 127)]#(62, 100, 46, 127, -128, 40)
 
-    white = (-5, -6, -2)
+    white = (63, 59, 61)
 
     center = center1
     EXPOSURE_TIME_SCALE = 0.8
     img_radius = 140
     robot_radius = 18
-    my_gain = 5
+    my_gain = 35
+    exposure = 100_000
 else:
-    yellow_threshold = [(0, 50, -4, 27, 16, 127)]
+    yellow_threshold = [(0, 100, -128, 24, 32, 127)]
     blue_threshold = [(0, 100, -128, 127, -128, -13)]
-    red_threshold = [(0, 100, 12, 127, -128, 127)]
+    red_threshold = [(0, 100, 35, 101, 17, 127)]
 
-    white = (62, 60, 62)
+    white = (-4, -6, -3)
 
     center = center2
     EXPOSURE_TIME_SCALE = 0.8
-    img_radius = 135
+    img_radius = 130
     robot_radius = 15
     my_gain = 20
+    exposure = 2_000
 uart = pyb.UART(3, 230400, timeout = 100, timeout_char = 100)
 uart.init(230400, bits=8, parity=False, stop=1, timeout_char=100) #initialize UART
+
+
 
 led3 = pyb.LED(2)
 
@@ -50,10 +54,6 @@ sensor.set_auto_gain(True)
 sensor.set_auto_whitebal(True)
 sensor.set_auto_exposure(True)
 current_exposure_time_in_microseconds =  sensor.get_exposure_us()
-sensor.set_auto_exposure(True, \
-    exposure_us = int(current_exposure_time_in_microseconds* EXPOSURE_TIME_SCALE))
-clock = time.clock()
-sensor.skip_frames(time = 500)
 
 
 sensor.set_pixformat(sensor.RGB565)
@@ -63,9 +63,9 @@ print(sensor.get_rgb_gain_db())
 sensor.set_auto_whitebal(False, rgb_gain_db = white)#(-2.5, -7, -1.47639)
 sensor.set_auto_exposure(False)
 current_exposure_time_in_microseconds =  sensor.get_exposure_us()
-sensor.set_auto_exposure(False, \
-    exposure_us = int(current_exposure_time_in_microseconds* EXPOSURE_TIME_SCALE))
+sensor.set_auto_exposure(False,exposure_us = exposure)
 clock = time.clock()
+print(float(current_exposure_time_in_microseconds))
 sensor.skip_frames(time = 1000) #delay
 
 image_height = sensor.height() #get image framesize
@@ -282,7 +282,7 @@ while(True):
        blue_is_see = False
 
        #detecting yellow gate
-       for blob in img.find_blobs(yellow_threshold, pixels_threshold=50, area_threshold=600, merge=True, margin = 20):#finding gates
+       for blob in img.find_blobs(yellow_threshold, pixels_threshold=25, area_threshold=200, merge=True, margin = 20):#finding gates
            if(blob[2] * blob[3] > old_area):
                old_area = blob[2] * blob[3]
                #print(blob)
@@ -307,7 +307,7 @@ while(True):
 
 
        #detecting blue gate
-       for blob in img.find_blobs(blue_threshold, pixels_threshold=50, area_threshold=50, merge=True, margin = 10): #finding gates
+       for blob in img.find_blobs(blue_threshold, pixels_threshold=5, area_threshold=200, merge=True, margin = 25): #finding gates
            if(blob[2] * blob[3] > old_area and blob[2] * blob[3] > 60):
                old_area = blob[2] * blob[3]
                #img.draw_rectangle(blob[0], blob[1], blob[2], blob[3], (0, 0, 200), 2)
@@ -333,7 +333,7 @@ while(True):
        max_area = 0
        ball_data = [center[0], center[1]]
        ball_distance = 0
-       for blob in img.find_blobs(red_threshold, pixels_threshold=25, area_threshold=25 , merge=True, margin = 10):
+       for blob in img.find_blobs(red_threshold, pixels_threshold=7, area_threshold=15 , merge=True, margin = 5):
            if blob.area() >= 3:
                if blob.compactness() > old_roundness:
                   #red = [blob[0], blob[1], blob[0] + blob[2], blob[1] +      blob[3],(blob[0] + int(blob[2] / 2)), (blob[1] + int(blob[3] / 2)), blob[2], blob[3]]

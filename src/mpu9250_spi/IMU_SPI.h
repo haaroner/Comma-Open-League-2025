@@ -130,5 +130,4 @@ double IMU::getZg()
 	return _mpuSensor.getZg();
 }
 
-
 #endif

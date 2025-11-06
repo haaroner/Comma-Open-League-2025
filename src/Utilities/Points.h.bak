@@ -21,6 +21,16 @@ namespace Points
   point speed_2(25, 60);
   point speed_3(45, 70);
   
+  point a_min(18, 12);
+  point a_max(18, 30);
+  
+  point a_cur(20, 0);
+  
+  point b_min(60, 50);
+  point b_max(60, 80);
+  
+  point b_cur(60, 0);
+  
   point defender_speed_1(5, 5);
   point defender_speed_2(10, 40);
   point defender_speed_3(30, 70);
@@ -35,6 +45,6 @@ namespace Points
   
   point defender_middle_cross_point;
   
-  point defender_no_ball_right_point(27, 40);
-  point defender_no_ball_left_point(-27, 40);
+  point defender_no_ball_right_point(27, 35);
+  point defender_no_ball_left_point(-27, 35);
 }

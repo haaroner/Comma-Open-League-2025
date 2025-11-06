@@ -50,6 +50,38 @@ void mpu9250_spi::writeReg(int regAddr, uint8_t data)
   _ss.setBit();
 }
 
+void mpu9250_spi::writeMagReg(uint8_t reg, uint8_t data)
+{
+  uint8_t slave_addr = AK8963_I2C_ADDR<<1;//??
+  
+  writeReg(I2C_SLV0_ADDR, slave_addr);
+  time_service::delay_ms(1);
+  writeReg(I2C_SLV0_REG, reg);
+  time_service::delay_ms(1);
+  writeReg(I2C_SLV0_CTRL, 0x81);//bits 7 and 0
+  time_service::delay_ms(1);
+  
+  writeReg((uint8_t)I2C_SLV0_CTRL,0x00);
+}
+
+
+uint8_t mpu9250_spi::readMagReg(uint8_t reg)
+{
+  uint8_t slave_addr = (AK8963_I2C_ADDR<<1)|0x80;//??
+  
+  writeReg(I2C_SLV0_ADDR, slave_addr);
+  time_service::delay_ms(1);
+  writeReg(I2C_SLV0_REG, reg);
+  time_service::delay_ms(1);
+  writeReg(I2C_SLV0_CTRL, 0x81);//bits 7 and 0
+  time_service::delay_ms(2);
+  
+  uint8_t data = readReg(EXT_SENS_DATA_00);
+  
+  writeReg((uint8_t)I2C_SLV0_CTRL,0x00);
+  
+  return data;
+}
 
 
 void mpu9250_spi::initIMU()
@@ -100,8 +132,14 @@ void mpu9250_spi::initIMU()
 	time_service::delay_ms(1);
 	writeReg(ACCEL_CONFIG_2, 0x03);			//accelerometer DLPF = 3, FCHOICE = 1 (FCHOICE_b = 0)
 	time_service::delay_ms(1);
+  //!!!modified
 	writeReg(INT_PIN_CFG, 0x30);				//latch INT pin untill any read operation
+  //!!def val 0x30
 	time_service::delay_ms(1);
+  //modified
+  //writeMagReg(AK8963_CNTL1, 0x16);  //set Mag to continuous 16 bit mode
+  //time_service::delay_ms(1);
+  //
 	writeReg(USER_CTRL, 0x04);			//enable fifo (first input first output buffer) and reset it
 	time_service::delay_ms(1);
 	writeReg(USER_CTRL, 0x40);
@@ -140,6 +178,14 @@ void mpu9250_spi::readGyro()					//reads data directly from gyroscope registers.
 	xg = double(convert(data[0], data[1])) / GYRO_DIV - xGyroOffset;
 	yg = double(convert(data[2], data[3])) / GYRO_DIV - yGyroOffset;
 	zg = double(convert(data[4], data[5])) / GYRO_DIV - zGyroOffset;
+}
+
+void mpu9250_spi::readMag()
+{
+  int data[6];
+  xm = double(convert(readMagReg(AK8963_HXH),readMagReg(AK8963_HXL)));
+  ym = double(convert(readMagReg(AK8963_HYH),readMagReg(AK8963_HYL)));
+  zm = double(convert(readMagReg(AK8963_HZH),readMagReg(AK8963_HZL)));
 }
 
 int mpu9250_spi::read_gyro_fs_sel()
@@ -356,6 +402,7 @@ void mpu9250_spi::updateAngles(double _time, bool flag1)
 	{
 		readAcc();
 		readGyro();
+    //readMag();
 	}
   
 	MadgwickAHRSupdateIMU(_time);
@@ -390,7 +437,7 @@ void mpu9250_spi::updateAnglesFromFIFO()
 	for(int i = 0; i < FIFOsize; i++)
 	{
 		//readFIFO();
-		updateAngles(0.007, 1);			//0.001s because gyro and acc sample rate is 1 kHz
+		updateAngles(-1, 1);			//0.001s because gyro and acc sample rate is 1 kHz
 	}	
 }
 
@@ -825,6 +872,21 @@ double mpu9250_spi::getYg()
 double mpu9250_spi::getZg()
 {
 	return zg;
+}
+
+double mpu9250_spi::getXm()
+{
+	return xm;
+}
+
+double mpu9250_spi::getYm()
+{
+	return ym;
+}
+
+double mpu9250_spi::getZm()
+{
+	return zm;
 }
 
 //////for stm32f407!!!

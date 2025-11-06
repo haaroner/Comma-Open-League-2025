@@ -124,7 +124,7 @@ void motors::moveRobot(double _maxPower,
     //{
       _m1.set_speed_percent(-Sm1);
       _m2.set_speed_percent(-Sm2);
-      _m3.set_speed_percent(Sm3);
+      _m3.set_speed_percent(-Sm3);
       _m4.set_speed_percent(Sm4);
     //}
   }

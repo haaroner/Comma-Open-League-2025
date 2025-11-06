@@ -25,6 +25,8 @@ class camera
     int16_t get_backward_angle();
     int16_t get_forward_distance();
     int16_t get_backward_distance();
+    int16_t get_forward_piece_angle();
+    int16_t get_backward_piece_angle();
     uint8_t get_data_state();
     int16_t get_ball_angle();
     int16_t get_abs_ball_angle();
@@ -53,6 +55,10 @@ class camera
 		volatile int _yellow_distance;
     int _yellow_angle;
     int _blue_distance;
+    int _blue_piece_angle;
+    int _yellow_piece_angle;
+    int _front_piece_angle;
+    int _back_piece_angle;
 		volatile int _blue_angle;
     int _ball_angle;
     int _ball_loc_angle;
@@ -84,7 +90,7 @@ class camera
     bool _first_receive;
     bool _yellow_first_receive, _blue_first_receive;
     bool _ball_is_seen;
-		uint8_t data[8];
+		uint8_t data[9];
 		uint8_t crc8(uint8_t* data, int len);
     uint8_t _state;
     uint32_t _ball_d_timer, _ball_timer;

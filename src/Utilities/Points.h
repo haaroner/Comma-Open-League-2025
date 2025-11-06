@@ -15,11 +15,21 @@ namespace Points
   point long_ricochet_right(58, 60, 40, 2);
   point long_ricochet_left(-58, 60, -40, 2);
   
-  point back_kick(25, 178, 117, 1);
+  point back_kick(20, 170, 125, 1 );
   
   point speed_1(8, 15);
   point speed_2(25, 60);
   point speed_3(45, 70);
+  
+  point a_min(16, 13);
+  point a_max(16, 40);
+  
+  point a_cur(14, 0);
+  
+  point b_min(40, 50);
+  point b_max(40, 75);
+  
+  point b_cur(40, 0);
   
   point defender_speed_1(5, 5);
   point defender_speed_2(10, 40);
@@ -35,6 +45,7 @@ namespace Points
   
   point defender_middle_cross_point;
   
-  point defender_no_ball_right_point(27, 35);
-  point defender_no_ball_left_point(-27, 35);
+  point defender_no_ball_right_point(20, 45);
+  point defender_no_ball_left_point(-20, 45);
+  point defender_no_ball_middle_point(0, 60);
 }

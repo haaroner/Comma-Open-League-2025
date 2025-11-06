@@ -87,6 +87,9 @@ namespace Robot
     
   camera camera(omni_camera, usart2_tx, usart2_rx);
     
+    
+  double _xm, _ym, _zm;  
+    
   TSSP ball(digital, tssp_write_4, tssp_write_3, tssp_write_2, 
   tssp_write_1, tssp_left_read, tssp_right_read, 1//,// tssp_left_read_dma, 
   /*tssp_right_read_dma*/);
@@ -222,7 +225,7 @@ namespace Robot
     time_service::startTime();
     Robot::spi2_mosi.resetBit();
     Robot::spi2_miso.resetBit();
-    mpu.init();
+    //mpu.init();
     
     
     //Kecker.resetBit();
@@ -805,16 +808,16 @@ namespace Robot
     if(my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)
             Robot::move_speed *= 0.75;
     
-    if(((point_distance > 7  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 30)&& _point.significanse == 2) || 
+    if(((point_distance > 9  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 30)&& _point.significanse == 2) || 
        (point_distance > 12  && _point.significanse == 1) ||
        (point_distance > 25 && _point.significanse == 0)) 
       point_reached_timer = time_service::getCurTime();
     
-    point_reached = time_service::getCurTime() - point_reached_timer > 500;
+    point_reached = time_service::getCurTime() - point_reached_timer > 200;
     
     otladka1 = int(point_reached_timer / 1000);
     
-    return (time_service::getCurTime() - point_reached_timer > 400) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
+    return (time_service::getCurTime() - point_reached_timer > 200) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
   }
   
   bool moveToPoint(int _x, int _y, int16_t _speed,  int16_t _x0_angle = -255)
@@ -977,7 +980,7 @@ namespace Robot
    // motors.moveRobot(0, 0, 0, 0, 0, 0);
     control_led(2, ON);
     wait(1000);
-    //mpu.calibrate(1000);
+    //mpu.calibrate(200);
     //mpu.setZeroAngle();
     while(usart6::available() == 0);
     gyro_zero_angle = lead_to_degree_borders((usart6::read() * 2));
@@ -1176,12 +1179,12 @@ namespace Robot
             case 1: change_side(); break;
             case 2: change_game_state(); break;
             case 3:  
-            //keck_new(middle_solenoid, two_capasitors, 50);            
-            //time_service::delay_ms(5000);
-            keck_new(right_solenoid, two_capasitors, 50);
+            
+            keck_new(middle_solenoid, two_capasitors, 50);  
             time_service::delay_ms(10000);
             keck_new(left_solenoid, two_capasitors, 50);
-           
+            time_service::delay_ms(10000);
+            keck_new(right_solenoid, two_capasitors, 50);     
             wait(1000);
             break;
             case 4: 

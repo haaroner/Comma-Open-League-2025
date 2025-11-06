@@ -30,10 +30,10 @@
 //trajectory settings
 //all speeds are in %, you can change in anyway you want
 //in Tomsk linear speeds were almost 2 times higher
-#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 80//30
-#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 20//15
-#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 7//7
-#define ATTACKER_TRAJECTORY_ACCELERATION 1.5
+#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 60//30
+#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 15//15
+#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 10//7
+#define ATTACKER_TRAJECTORY_ACCELERATION 10
 
 /////////////////////////////////////////////////////////////////////
 
@@ -61,10 +61,10 @@
 #define ROBOT_MAX_RIGHT_Y 220
 #define ROBOT_MAX_LEFT_Y 200
 
-#define ATTACKER_MAX_X 53
-#define ATTACKER_MIN_X -53
-#define ATTACKER_MAX_Y 210
-#define ATTACKER_MIN_Y 40
+#define ATTACKER_MAX_X 55
+#define ATTACKER_MIN_X -55
+#define ATTACKER_MAX_Y 215
+#define ATTACKER_MIN_Y 20
 
 #define DEFENDER_MAX_X 40
 #define DEFENDER_MIN_X -40

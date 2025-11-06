@@ -242,6 +242,7 @@ public:
   mpu9250_spi(pin &ss);
 	volatile double xa, ya, za;
 	volatile double xg, yg, zg;
+  volatile double xm, ym, zm;
 	volatile double temp;
 	double q0, q1, q2, q3;
 	double pitch, roll, yaw;
@@ -252,6 +253,7 @@ public:
 	void initIMU();
 	void readAcc();
 	void readGyro();
+  void readMag();
 	void readTemp();
 	int readFIFOsize();
 	void readFIFO();
@@ -291,6 +293,8 @@ private:
 	inline int convert(uint16_t msb, uint8_t lsb);
 	int readReg(int regAddr, int * data = 0, int q = 0);
 	void writeReg(int regAddr, uint8_t data);
+  void writeMagReg(uint8_t reg, uint8_t data);
+  uint8_t readMagReg(uint8_t reg);
 	float qToFloat(long number, unsigned char q);
 	void computeEulerAngles(bool degrees);
 };

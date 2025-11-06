@@ -1,51 +1,5 @@
-
 #include "usart6.h"
 
-//extern "C"
-//{
-//	void USART6_IRQHandler(void)
-//	{
-//    USART_ClearITPendingBit(USART6, USART_IT_TXE);
-//    USART_ClearITPendingBit(USART6, USART_IT_RXNE);
-//		volatile uint8_t data = USART6->SR;
-//		if(data & USART_SR_RXNE)
-//		{
-//			usart6::rx[usart6::_rxCnt] = USART6->DR;
-//			usart6::_rxCnt++;
-//			if(usart6::_rxCnt == 16)
-//			{
-//				usart6::_rxCnt = 0;
-//			}
-//		}
-//    usart6::_tets = time_service::getCurTime();
-//		if(data &USART_SR_TC)
-//		{
-//        USART_ClearITPendingBit(USART6, USART_IT_TC);
-//        //if(usart6::_txCnt != 0)
-//        //{
-//          if(usart6::_bytesToSend > 0)
-//          {
-//            usart6::_bytesToSend--;
-//            (USART6->DR) = usart6::tx[usart6::_sendCnt];
-//            usart6::_sendCnt++;
-//            if(usart6::_sendCnt == 16)
-//            {
-//              usart6::_sendCnt = 0;
-//            }
-//          }
-//        //}
-//        //else
-//        //{
-//          //usart6::flag = 1;
-//        //}
-//		}
-//		if(USART6->SR & USART_SR_ORE)
-//		{
-//			uint8_t a = USART6 -> DR;
-//			(void)a;
-//		}
-//	}
-//}
 extern "C" void USART6_IRQHandler(void)
 {
   if(USART_GetITStatus(USART6, USART_IT_TXE) == SET)
@@ -74,7 +28,7 @@ extern "C" void USART6_IRQHandler(void)
     {
       usart6::rx[usart6::_rxCnt] = USART_ReceiveData(USART6);
       
-      //if write counter reached read, and not read counter reached write
+      //if write counter reached read counter, and not read counter reached write
       if((usart6::_receiver_buffer_overflow_warning == true) && (usart6::_readCnt == usart6::_rxCnt))
         usart6::_readCnt++;
       if(usart6::_readCnt == 30)
@@ -160,6 +114,15 @@ namespace usart6
 		{
 		 _readCnt = 0;
 		}
+		EXIT_CRITICAL_SECTION();
+		return dt;
+	}  
+  
+  uint16_t look()
+	{  
+		uint16_t dt;
+		ENTER_CRITICAL_SECTION();
+		dt = rx[_readCnt];
 		EXIT_CRITICAL_SECTION();
 		return dt;
 	}  

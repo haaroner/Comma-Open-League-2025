@@ -49,6 +49,8 @@ camera::camera(bool Camera_pos, pin &tx, pin &rx):m_tx(tx), m_rx(rx)
   _old_x = 0;
   _old_y = 0;
   _yellow_angle = 0;
+  _blue_piece_angle = 0;
+  _yellow_piece_angle = 0;
   _blue_angle = 180;
   _yellow_distance = 100;
   _blue_distance = 80;
@@ -78,20 +80,21 @@ void camera::getData()
 {
   if(_camera_pos == omni_camera)
   {
-    if(usart2::available() > 7)
+    if(usart2::available() > 9)
     {
       camera_data = usart2::read();
       if(camera_data == 255)
       {
-        for(int i = 0; i < 7; i++)
+        for(int i = 0; i < 9; i++)
           data[i] = usart2::read();
 
-        if(data[6] == crc8(data, 6))
+        if(data[8] == crc8(data, 8))
         {
           _state = 1;
           if(data[1] != 0)
           {
             _yellow_angle = lead_to_degree_borders(data[0]  * 3 - 180);
+            
             _yellow_distance = data[1] * 3;
             _yellow_first_receive = true;
           }
@@ -100,11 +103,17 @@ void camera::getData()
             _yellow_first_receive = false;
             _state = 0;
           }
-
+          if(data[7] != 250)
+          {
+            _yellow_piece_angle = lead_to_degree_borders(data[7] * 3 - 180);
+          }
+          else
+            _yellow_piece_angle = _yellow_angle;
           if(data[3] != 0)
           {
             _blue_angle = lead_to_degree_borders(data[2] * 3 -180);
             _blue_distance = data[3] * 3;
+            _blue_piece_angle = lead_to_degree_borders(data[6] * 3 - 180);
             _blue_first_receive = true;
           }
           else
@@ -112,6 +121,13 @@ void camera::getData()
             _blue_first_receive = false;
             _state = 2;
           }
+          
+          if(data[6] != 250)
+          {
+            _blue_piece_angle = lead_to_degree_borders(data[6] * 3 - 180);
+          }
+          else
+            _blue_piece_angle = _blue_angle;
           
           if(data[5] != 0)
           {
@@ -159,18 +175,26 @@ void camera::calculate_pos(int16_t angle, bool side)
 //      else 
 //        _yellow_angle = 0;
 //    }
+    if(_blue_first_receive)
+      _blue_piece_angle = lead_to_degree_borders(_blue_piece_angle + angle);
+    if(_yellow_first_receive)
+      _yellow_piece_angle = lead_to_degree_borders(_yellow_piece_angle + angle);
     if(side) //enemy gate: yellow - 1; blue - 0
     {
        _front_angle = _yellow_angle;
+       _front_piece_angle = _yellow_piece_angle;
        _front_distance = _yellow_distance;
-       _backward_angle = _blue_angle;
+       _backward_angle = _blue_piece_angle;
+       _back_piece_angle = _blue_piece_angle;
        _backward_distance = _blue_distance;
     }
     else
     {
        _front_angle = _blue_angle;
+       _front_piece_angle = _blue_piece_angle;
        _front_distance = _blue_distance;
        _backward_angle = _yellow_angle;
+       _back_piece_angle = _yellow_piece_angle;
        _backward_distance = _yellow_distance;
         if(_state == 0)
           _state = 2;
@@ -317,6 +341,15 @@ int16_t camera::get_forward_angle()
     else if (_front_angle < -180)
         _front_angle += 360;
   return _front_angle;
+}
+
+int16_t camera::get_forward_piece_angle()
+{
+  if (_front_piece_angle > 180)
+        _front_piece_angle -= 360;
+    else if (_front_piece_angle < -180)
+        _front_piece_angle += 360;
+  return _front_piece_angle;
 }
 
 int16_t camera::get_backward_angle()

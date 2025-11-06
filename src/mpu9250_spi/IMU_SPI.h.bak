@@ -14,7 +14,7 @@ class IMU
 		void setZeroAngle();
 		void calibrate(uint32_t t);
 		unsigned int update();
-		void updateAnglesFromFIFO();
+		volatile void updateAnglesFromFIFO();
 		double getAngle();
 		double imuFloatValue, angleChange;
 		long long int imuFloatTime;
@@ -24,6 +24,9 @@ class IMU
 		double getXg();
 		double getYg();
 		double getZg();
+    double getXm();
+    double getYm();
+    double getZm();
     int gyro_sel();
     int acc_sel();
     float get_acceleration();
@@ -67,7 +70,7 @@ unsigned int IMU::update()
 }
 
 
-void IMU::updateAnglesFromFIFO()
+volatile void IMU::updateAnglesFromFIFO()
 {
 	_mpuSensor.updateAnglesFromFIFO();
 }
@@ -130,5 +133,19 @@ double IMU::getZg()
 	return _mpuSensor.getZg();
 }
 
+double IMU::getXm()
+{
+	return _mpuSensor.getXm();
+}
+
+double IMU::getYm()
+{
+	return _mpuSensor.getYm();
+}
+
+double IMU::getZm()
+{
+	return _mpuSensor.getZm();
+}
 
 #endif

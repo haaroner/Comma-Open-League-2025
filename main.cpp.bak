@@ -14,6 +14,7 @@ int defender_move_speed = 0, defender_move_point_dist;
 int additional_defender_y = 0;
 uint32_t timer_100ms = 0;
 int test_1 = 0;
+int max_out_v = 10;
 uint32_t attacker_2_to_1_tim = 0;
 
 uint8_t _daleko = 0;
@@ -29,7 +30,7 @@ uint32_t _goida = 0;
 point defender_middle_cross_point, defender_detour_left_point, defender_detour_right_point,
 defender_detour_point, ball_abs_position;
 
-#define TEST_DRIBLER false
+#define TEST_DRIBLER true
 #define TEST_MOTORS false
 #define TEST_BLUETOOTH false
  
@@ -42,6 +43,7 @@ uint8_t test_dribler_speed = 0, to_keck = 0, test_stop_dribler_speed = 0;
 uint32_t _test_dribler_power = 5, test_stop_time = 5;
 uint32_t spas = 0;
 int arr[] = {200};
+volatile uint16_t test_kick_power = 0, wait_time = 300, kick_dr_speed = 100;
 
 int main()
 {
@@ -73,19 +75,14 @@ int main()
   while(true)
   {
     Robot::use_dribler(true);
-    Robot::set_dribler_speed(constrain(150, 0, test_dribler_speed));
+    Robot::set_dribler_speed(constrain(60, 0, test_dribler_speed));
     if(to_keck == 1)
     {//AWESOME KICK PARAMS 90 drib   3ms kick
-      Robot::set_dribler_speed(test_dribler_speed, true);
-      Robot::wait(300);
-      Robot::set_dribler_speed(test_stop_dribler_speed, true);
-      Robot::wait(test_stop_time);
-      if(test_1 == 1)
-        Robot::keck_new(right_solenoid, L_capacitor, _test_dribler_power);
-      else
-        Robot::keck_new(left_solenoid, L_capacitor, _test_dribler_power);
+      Robot::set_dribler_speed(kick_dr_speed, true);
+      Robot::wait(wait_time);
+      Robot::keck_new(right_solenoid, two_capasitors, test_kick_power);
       Robot::wait(50);
-      test_dribler_speed = constrain(120, 0, test_dribler_speed);
+      test_dribler_speed = constrain(0, 0, test_dribler_speed);
       Robot::wait(100);
       to_keck = 0;
     }
@@ -133,7 +130,7 @@ int main()
       attacker_old_state = 0;
       defender_state = 1;
       defender_old_state = 0;
-      Robot::display_data(Robot::loop_delay);
+      Robot::display_data(Robot::_xm, Robot::_zm);
       //Robot::display_data(Robot::is_ball_captured(), my_abs(Robot::_ball_sen_high_data - Robot::_ball_sen_low_data));
     }
     else if(gaming_state == 1)
@@ -193,7 +190,7 @@ int main()
             attacker_state1_tim = Robot::time;
           }
           if(Robot::ball_distance < 30 || Robot::is_ball_captured())
-            Robot::set_dribler_speed(85.0);        
+            Robot::set_dribler_speed(65.0);        
           else      
             Robot::set_dribler_speed(0.0);  
 
@@ -286,19 +283,12 @@ int main()
         if(attacker_state == 1)
         {  
           Robot::enable_trajectory(false);
-          Robot::moveRobotAbs(Robot::ball_abs_angle, new_velocity(Robot::ball_distance));
-          Robot::setAngle(Robot::ball_abs_angle, 20.0, 0.2, -0.1, 0.05);
-          
-          if(my_abs(Robot::ball_loc_angle) > 30)
-            Robot::move_speed *= 0.75;
-          
-          if(my_abs(Robot::robot_x) > 40)
-          {
-            Robot::move_speed = constrain(30, 0, Robot::move_speed);           
-          }  
-          
+          Robot::moveRobotAbs(Robot::ball_abs_angle, fixed_velocity(Robot::ball_distance, my_abs(Robot::ball_loc_angle)));
+
+          Robot::setAngle(lead_to_degree_borders(Robot::ball_abs_angle+8), 20.0, 0.2, -0.1, 0.05);
+
           if(Robot::robot_y > 185)
-            Robot::move_speed = constrain(40, 0, Robot::move_speed);
+            Robot::move_speed = constrain(10, 0, Robot::move_speed);
         }
         if(attacker_state == 2)
         {
@@ -380,9 +370,9 @@ int main()
               else
                 Robot::wait(300);
               if(Robot::robot_x > 0)
-                Robot::keck_new(right_solenoid, two_capasitors, 24);//6
+                Robot::keck_new(right_solenoid, two_capasitors, 20);//6
               else
-                Robot::keck_new(left_solenoid, two_capasitors, 8);
+                Robot::keck_new(left_solenoid, two_capasitors, 6);
               
               Robot::moveRobotAbs(-90 * my_sgn(attacker_2_state_side), 70);
               Robot::wait(500);
@@ -452,10 +442,11 @@ int main()
         
         Robot::changeSmoothness(1);
         
-        if(my_abs(Robot::robot_x) > 25)
+        if(my_abs(Robot::robot_x) > (ATTACKER_MAX_X - 20))
         {
-          Robot::move_speed = constrain(60, 0, Robot::move_speed);
-        }
+          max_out_v = constrainf(35, 1,35/20*my_abs(ATTACKER_MAX_X - Robot::robot_x));
+          Robot::move_speed = constrain(max_out_v+15, 0, Robot::move_speed);           
+        }  
         
         if(my_abs(Robot::robot_y) > 200)
         {
@@ -465,13 +456,13 @@ int main()
         if(attacker_state != 255)
         {
         
-        if(Robot::robot_x > 38)
+        if(Robot::robot_x > ATTACKER_MAX_X)
         {
           Robot::moveRobotAbs(-90, 15);
           Robot::changeSmoothness(2);          
         }
           
-        if(Robot::robot_x < -35)
+        if(Robot::robot_x < ATTACKER_MIN_X)
         {
           Robot::moveRobotAbs(90, 15);  
           Robot::changeSmoothness(2);

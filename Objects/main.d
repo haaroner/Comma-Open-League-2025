@@ -103,3 +103,5 @@
 .\objects\main.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\typeinfo
 .\objects\main.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\exception
 .\objects\main.o: .\src\dribler\dribler.h
+.\objects\main.o: .\src\BNO055\BNO055.h
+.\objects\main.o: .\src\main\project_config.h
