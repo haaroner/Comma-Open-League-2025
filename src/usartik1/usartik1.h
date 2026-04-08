@@ -1,19 +1,23 @@
 #pragma once
 #include "project_config.h"
+#include "time_service.h"
 
-namespace usartik1
+namespace usart1
 {
-	void usart1Init(uint32_t speed, uint8_t word_length, float stop_bits, uint16_t buff_size = 25);
-	void write_uart1(uint8_t _byte);
-  void abcde(uint8_t _data);
+	void usart1Init(uint32_t speed, uint8_t word_length, float stop_bits);
+	void write(uint8_t _byte);
 	uint16_t read();
 	uint16_t available();
-	extern volatile uint8_t tx[25];
-	extern volatile uint8_t rx[25];
+  uint16_t look();
+	extern volatile uint8_t tx[30];
+	extern volatile uint8_t rx[30];
 	extern volatile uint16_t _rxCnt;
 	extern volatile uint16_t _txCnt;
 	extern volatile bool flag;
 	extern volatile uint16_t _readCnt;
 	extern volatile uint16_t _sendCnt;
-  extern volatile uint16_t _buffer_size;
+  extern volatile uint8_t _bytesToSend;
+  extern volatile uint8_t _bytesToRead;
+  extern volatile uint32_t _tets;
+  extern volatile bool _receiver_buffer_overflow_warning;
 }

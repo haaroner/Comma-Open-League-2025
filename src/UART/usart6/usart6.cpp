@@ -19,25 +19,13 @@ extern "C" void USART6_IRQHandler(void)
   
   if(USART_GetITStatus(USART6, USART_IT_RXNE) == SET)
   {
-    usart6::_tets = 1;
-    if((USART6->SR & (USART_FLAG_NE || USART_FLAG_FE || USART_FLAG_PE || USART_FLAG_ORE)) != 0)
+    if((USART6->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE | USART_FLAG_ORE)) != 0)
     {
       USART_ReceiveData(USART6);//skip byte
     }
     else
     {
       usart6::rx[usart6::_rxCnt] = USART_ReceiveData(USART6);
-      
-      //if write counter reached read counter, and not read counter reached write
-      if((usart6::_receiver_buffer_overflow_warning == true) && (usart6::_readCnt == usart6::_rxCnt))
-        usart6::_readCnt++;
-      if(usart6::_readCnt == 30)
-        usart6::_readCnt = 0;
-      
-      if(usart6::_readCnt > usart6::_rxCnt)//if write counter can reach read cnt
-        usart6::_receiver_buffer_overflow_warning = true;
-      else
-        usart6::_receiver_buffer_overflow_warning = false;
       
       usart6::_rxCnt++;
       if(usart6::_rxCnt == 30)

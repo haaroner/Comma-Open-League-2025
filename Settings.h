@@ -30,9 +30,9 @@
 //trajectory settings
 //all speeds are in %, you can change in anyway you want
 //in Tomsk linear speeds were almost 2 times higher
-#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 60//30
-#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 15//15
-#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 10//7
+#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 70//60
+#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 20//15
+#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 10//12
 #define ATTACKER_TRAJECTORY_ACCELERATION 10
 
 /////////////////////////////////////////////////////////////////////
@@ -61,13 +61,14 @@
 #define ROBOT_MAX_RIGHT_Y 220
 #define ROBOT_MAX_LEFT_Y 200
 
-#define ATTACKER_MAX_X 55
-#define ATTACKER_MIN_X -55
+#define ATTACKER_MAX_X 52
+#define ATTACKER_MIN_X -50
+
 #define ATTACKER_MAX_Y 215
 #define ATTACKER_MIN_Y 20
 
-#define DEFENDER_MAX_X 40
-#define DEFENDER_MIN_X -40
+#define DEFENDER_MAX_X 45
+#define DEFENDER_MIN_X -45
 #define DEFENDER_MAX_Y 180
 #define DEFENDER_MIN_Y 25
 /////////////////////////////////////////////////
@@ -95,8 +96,8 @@
 #define KD_GYRO_STOPPED 10.0
 #define KI_GYRO_STOPPED 0.01
 
-#define ATTACKER_BALL_DETECTION_LIGHTNESS 300/////////
-#define DEFENDER_BALL_DETECTION_LIGHTNESS 100
+#define ATTACKER_BALL_DETECTION_LIGHTNESS 100//300/////////
+#define DEFENDER_BALL_DETECTION_LIGHTNESS 300
 
 #define BUTTON_MIN_PRESSING_TIME_MS 65
 

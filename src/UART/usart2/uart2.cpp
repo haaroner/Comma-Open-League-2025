@@ -1,51 +1,5 @@
-
 #include "usart2.h"
 
-//extern "C"
-//{
-//	void USART6_IRQHandler(void)
-//	{
-//    USART_ClearITPendingBit(USART6, USART_IT_TXE);
-//    USART_ClearITPendingBit(USART6, USART_IT_RXNE);
-//		volatile uint8_t data = USART6->SR;
-//		if(data & USART_SR_RXNE)
-//		{
-//			usart6::rx[usart6::_rxCnt] = USART6->DR;
-//			usart6::_rxCnt++;
-//			if(usart6::_rxCnt == 16)
-//			{
-//				usart6::_rxCnt = 0;
-//			}
-//		}
-//    usart6::_tets = time_service::getCurTime();
-//		if(data &USART_SR_TC)
-//		{
-//        USART_ClearITPendingBit(USART6, USART_IT_TC);
-//        //if(usart6::_txCnt != 0)
-//        //{
-//          if(usart6::_bytesToSend > 0)
-//          {
-//            usart6::_bytesToSend--;
-//            (USART6->DR) = usart6::tx[usart6::_sendCnt];
-//            usart6::_sendCnt++;
-//            if(usart6::_sendCnt == 16)
-//            {
-//              usart6::_sendCnt = 0;
-//            }
-//          }
-//        //}
-//        //else
-//        //{
-//          //usart6::flag = 1;
-//        //}
-//		}
-//		if(USART6->SR & USART_SR_ORE)
-//		{
-//			uint8_t a = USART6 -> DR;
-//			(void)a;
-//		}
-//	}
-//}
 extern "C" void USART2_IRQHandler(void)
 {
   if(USART_GetITStatus(USART2, USART_IT_TXE) == SET)
@@ -72,18 +26,8 @@ extern "C" void USART2_IRQHandler(void)
     }
     else
     {
+      usart2::_bytesToRead++;
       usart2::rx[usart2::_rxCnt] = USART_ReceiveData(USART2);
-      
-      //if write counter reached read, and not read counter reached write
-      if((usart2::_receiver_buffer_overflow_warning == true) && (usart2::_readCnt == usart2::_rxCnt))
-        usart2::_readCnt++;
-      if(usart2::_readCnt == 30)
-        usart2::_readCnt = 0;
-      
-      if(usart2::_readCnt > usart2::_rxCnt)//if write counter can reach read cnt
-        usart2::_receiver_buffer_overflow_warning = true;
-      else
-        usart2::_receiver_buffer_overflow_warning = false;
       
       usart2::_rxCnt++;
       if(usart2::_rxCnt == 30)
@@ -102,6 +46,7 @@ namespace usart2
   volatile uint16_t _readCnt;
   volatile uint16_t _sendCnt;
   volatile uint8_t _bytesToSend;
+  volatile uint8_t _bytesToRead;
   volatile uint32_t _tets;
   volatile bool _receiver_buffer_overflow_warning;
   
@@ -114,7 +59,7 @@ namespace usart2
 		_readCnt = 0;
 		_sendCnt = 0;
     _bytesToSend = 0;
-    _receiver_buffer_overflow_warning = false;
+    _bytesToRead = 0;
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 		USART_InitTypeDef u;
 		u.USART_BaudRate = speed;
@@ -132,22 +77,16 @@ namespace usart2
 		u.USART_Mode =  USART_Mode_Rx | USART_Mode_Tx;
 		u.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 		USART_Init(USART2, &u);
-////		USART_ITConfig(USART6, USART_IT_TC, ENABLE);
-////		USART_ITConfig(USART6, USART_IT_RXNE, ENABLE);
-////		USART_Cmd(USART6, ENABLE);
-////		NVIC_SetPriority(USART6_IRQn, 0);
-////		NVIC_EnableIRQ(USART6_IRQn);
- NVIC_InitTypeDef NVIC_InitStructure;
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //?????? ????????? ? ??????
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; //?????? ????????? ? ?????????
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //????????? ??????????
-  NVIC_Init(&NVIC_InitStructure); //??????????????
-  USART_Cmd(USART2, ENABLE);
-  USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
-	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-  
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //?????? ????????? ? ??????
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; //?????? ????????? ? ?????????
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //????????? ??????????
+    NVIC_Init(&NVIC_InitStructure); //??????????????
+    USART_Cmd(USART2, ENABLE);
+    USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 	}  
 		 
 	uint16_t read()
@@ -155,7 +94,11 @@ namespace usart2
 		uint16_t dt;
 		ENTER_CRITICAL_SECTION();
 		dt = rx[_readCnt];
-		_readCnt++;
+    if(_bytesToRead > 0)
+    {
+      _readCnt++;
+      _bytesToRead--;
+    }
 		if(_readCnt == 30)
 		{
 		 _readCnt = 0;
@@ -172,7 +115,7 @@ namespace usart2
 
 		size = _rxCnt - _readCnt;
 		EXIT_CRITICAL_SECTION();
-		return size;
+		return _bytesToRead;
 	}  
 		 
 	void write(uint8_t _byte)

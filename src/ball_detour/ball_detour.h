@@ -24,7 +24,7 @@ int16_t exponential_detour(double ball_angle, double distance, double k1_angle, 
   if(angK > 90)
     angK = 90;
   
-  distance = convert_dist(7, distance);
+  distance = convert_dist(15, distance);
   
   distK = k1_dist * pow(ec, double(k2_dist * distance));
   

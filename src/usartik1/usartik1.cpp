@@ -1,67 +1,76 @@
 #include "usartik1.h"
 
-extern "C"
+extern "C" void USART1_IRQHandler(void)
 {
-	void USART1_IRQHandler(void)
-	{
-		volatile uint8_t data = USART1->SR;
-		if(data & USART_SR_RXNE)
-		{
-			usartik1::rx[usartik1::_rxCnt] = USART1->DR;
-			usartik1::_rxCnt++;
-			if(usartik1::_rxCnt == usartik1::_buffer_size)
-			{
-				usartik1::_rxCnt = 0;
-			}
-		}
-		if(data &USART_SR_TC)
-		{
-			USART_ClearITPendingBit(USART1, USART_IT_TC);
-			if(usartik1::_txCnt != 0)
-			{
-				(USART1->DR) = usartik1::tx[usartik1::_sendCnt];
-				usartik1::_sendCnt++;
-				if(usartik1::_sendCnt == usartik1::_buffer_size)
-				{
-					usartik1::_sendCnt = 0;
-				}
-			}
-			else
-			{
-				usartik1::flag = 1;
-			}
-		}
-		if(USART1 -> SR & USART_SR_ORE)
-		{
-			uint8_t a = USART1 -> DR;
-			(void)a;
-		}
-	}
+  if(USART_GetITStatus(USART1, USART_IT_TXE) == SET)
+  {
+    if(usart1::_bytesToSend > 0)
+    {
+      --usart1::_bytesToSend;
+      USART_SendData(USART1, usart1::tx[usart1::_sendCnt++]);
+      if(usart1::_sendCnt == 30)
+        usart1::_sendCnt = 0;
+    }
+    else
+    {
+       USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+    }
+  }
+  
+  if(USART_GetITStatus(USART1, USART_IT_RXNE) == SET)
+  {
+    usart1::_tets = 1;
+    if((USART1->SR & (USART_FLAG_NE || USART_FLAG_FE || USART_FLAG_PE || USART_FLAG_ORE)) != 0)
+    {
+      USART_ReceiveData(USART1);//skip byte
+    }
+    else
+    {
+      usart1::_bytesToRead++;
+      usart1::rx[usart1::_rxCnt] = USART_ReceiveData(USART1);
+      
+      //if write counter reached read counter, and not read counter reached write
+      if((usart1::_receiver_buffer_overflow_warning == true) && (usart1::_readCnt == usart1::_rxCnt))
+        usart1::_readCnt++;
+      if(usart1::_readCnt == 30)
+        usart1::_readCnt = 0;
+      
+      if(usart1::_readCnt > usart1::_rxCnt)//if write counter can reach read cnt
+        usart1::_receiver_buffer_overflow_warning = true;
+      else
+        usart1::_receiver_buffer_overflow_warning = false;
+      
+      usart1::_rxCnt++;
+      if(usart1::_rxCnt == 30)
+        usart1::_rxCnt = 0;
+    }
+  }
 }
 
-namespace usartik1
+namespace usart1
 {
-  volatile uint8_t tx[25];
-  volatile uint8_t rx[25];
+  volatile uint8_t tx[30];
+  volatile uint8_t rx[30];
   volatile uint16_t _rxCnt;
   volatile uint16_t _txCnt;
   volatile bool flag;
   volatile uint16_t _readCnt;
   volatile uint16_t _sendCnt;
-  volatile uint16_t _buffer_size;
+  volatile uint8_t _bytesToSend;
+  volatile uint8_t _bytesToRead;
+  volatile uint32_t _tets;
+  volatile bool _receiver_buffer_overflow_warning;
+  
 	
-	void usart1Init(uint32_t speed, uint8_t word_length, float stop_bits, uint16_t buff_size)
+    void usart1Init(uint32_t speed, uint8_t word_length, float stop_bits)
 		{
 		flag = 1;
 		_txCnt = 0;
 		_rxCnt = 0;
 		_readCnt = 0;
 		_sendCnt = 0;
-    if(buff_size <= 25 && buff_size > 0) _buffer_size = buff_size;
-    else _buffer_size = 25;
-      
-    rx[0] = 0;  
-
+    _bytesToSend = 0;
+    _receiver_buffer_overflow_warning = false;
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 		USART_InitTypeDef u;
 		u.USART_BaudRate = speed;
@@ -73,17 +82,28 @@ namespace usartik1
     else if(stop_bits == 0.5) u.USART_StopBits = USART_StopBits_0_5;
     else if(stop_bits == 1.5) u.USART_StopBits = USART_StopBits_1_5;
     else u.USART_StopBits = USART_StopBits_1;
-      
+		u.USART_WordLength = USART_WordLength_8b;
+		u.USART_StopBits = USART_StopBits_1;
 		u.USART_Parity = USART_Parity_No;
-		u.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+		u.USART_Mode =  USART_Mode_Rx | USART_Mode_Tx;
 		u.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 		USART_Init(USART1, &u);
-		USART_ITConfig(USART1, USART_IT_TC, ENABLE);
-		USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-		USART_Cmd(USART1, ENABLE);
-		NVIC_SetPriority(USART1_IRQn, 0);
-		NVIC_EnableIRQ(USART1_IRQn);
-    return;
+////		USART_ITConfig(USART1, USART_IT_TC, ENABLE);
+////		USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+////		USART_Cmd(USART1, ENABLE);
+////		NVIC_SetPriority(USART1_IRQn, 0);
+////		NVIC_EnableIRQ(USART1_IRQn);
+ NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+  NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //?????? ????????? ? ??????
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; //?????? ????????? ? ?????????
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //????????? ??????????
+  NVIC_Init(&NVIC_InitStructure); //??????????????
+  USART_Cmd(USART1, ENABLE);
+  USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+  
 	}  
 		 
 	uint16_t read()
@@ -91,11 +111,24 @@ namespace usartik1
 		uint16_t dt;
 		ENTER_CRITICAL_SECTION();
 		dt = rx[_readCnt];
-		_readCnt++;
-		if(_readCnt == _buffer_size)
+    if(_bytesToRead > 0)
+    {
+      _readCnt++;
+      _bytesToRead--;
+    }
+		if(_readCnt == 30)
 		{
 		 _readCnt = 0;
 		}
+		EXIT_CRITICAL_SECTION();
+		return dt;
+	}  
+  
+  uint16_t look()
+	{  
+		uint16_t dt;
+		ENTER_CRITICAL_SECTION();
+		dt = rx[_readCnt];
 		EXIT_CRITICAL_SECTION();
 		return dt;
 	}  
@@ -104,49 +137,29 @@ namespace usartik1
 	{  
 		uint16_t size;
 		ENTER_CRITICAL_SECTION();
-		size = _rxCnt - _readCnt;
+
+
+		//size = _rxCnt - _readCnt;
 		EXIT_CRITICAL_SECTION();
-		return size;
+		return _bytesToRead;
 	}  
-	
-  void abcde(uint8_t _data)
-  {
-   ENTER_CRITICAL_SECTION();
-		if(!flag)
-		{
-		 tx[_txCnt] = _data;
+		 
+	void write(uint8_t _byte)
+	{  
+    //while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+    //USART_SendData(USART1,_byte);
+		ENTER_CRITICAL_SECTION();
+    if(_bytesToSend < 29)
+    {
+      USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+		 tx[_txCnt] = _byte;
 		 _txCnt++;
-		 if(_txCnt == _buffer_size)
+      _bytesToSend += 1;
+		 if(_txCnt == 30)
 		 {
 		 _txCnt = 0;
 		 }
-		}
-		else
-		{
-		 flag = 0;
-		 (USART1->DR) = _data;
-		}
+   }
 		EXIT_CRITICAL_SECTION();
-    return;
-  }    
-  
-	void write_uart1(uint8_t _byte)
-	{  
-//		ENTER_CRITICAL_SECTION();
-//		if(!flag)
-//		{
-//		 tx[_txCnt] = _byte;
-//		 _txCnt++;
-//		 if(_txCnt == 25)
-//		 {
-//		 _txCnt = 0;
-//		 }
-//		}
-//		else
-//		{
-//		 flag = 0;
-//		 (USART1->DR) = _byte;
-//		}
-//		EXIT_CRITICAL_SECTION();
 	}
 }

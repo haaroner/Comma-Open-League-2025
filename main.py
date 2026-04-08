@@ -8,37 +8,37 @@ callibrate_center = False
 blue_x_test = 0
 blue_y_test = 0
 
-center1 = [160, 118]#[176, 130]
-center2 = [163, 116]#[162, 118]
+center1 = [164, 119]#[81, 59]#[163, 116]
+center2 = [165, 117]#[83,58]#[160, 120]
 
 robot = 1
 if robot == 1 or robot == 3:#attacker
 
-    yellow_threshold = [(0, 100, -2, 127, 17, 127)]
-    blue_threshold = [(39, 100, -63, 4, -128, -5)]
-    red_threshold = [(67, 100, 17, 127, -128, 127)]#(62, 100, 46, 127, -128, 40)
+    yellow_threshold = [(0, 100, -1, 127, 13, 127)]
+    blue_threshold = [(0, 100, -128, 127, -128, -19)]
+    red_threshold = [(0, 100, 25, 127, -128, 127)]#( 62, 100, 46, 127, -128, 40)
 
-    white = (63, 59, 61)
+    white = (63, 60, 64)
 
     center = center1
     EXPOSURE_TIME_SCALE = 0.8
-    img_radius = 140
-    robot_radius = 18
-    my_gain = 35
-    exposure = 100_000
+    img_radius = 140#65#140
+    robot_radius = 19#9#18
+    my_gain = 25
+    exposure = 80_000
 else:
-    yellow_threshold = [(0, 100, -128, 24, 32, 127)]
-    blue_threshold = [(0, 100, -128, 127, -128, -13)]
-    red_threshold = [(0, 100, 35, 101, 17, 127)]
+    yellow_threshold = [(0, 100, -6, 127, 28, 127)]
+    blue_threshold = [(0, 38, -128, 127, -128, -15)]
+    red_threshold = [(0, 100, 44, 127, -128, 127)]
 
-    white = (-4, -6, -3)
+    white = (-3.5, -6, -0.3)
 
     center = center2
     EXPOSURE_TIME_SCALE = 0.8
-    img_radius = 130
-    robot_radius = 15
-    my_gain = 20
-    exposure = 2_000
+    img_radius = 130#70#130
+    robot_radius = 20#10#15
+    my_gain = 7
+    exposure = 5_000
 uart = pyb.UART(3, 230400, timeout = 100, timeout_char = 100)
 uart.init(230400, bits=8, parity=False, stop=1, timeout_char=100) #initialize UART
 
@@ -54,7 +54,7 @@ sensor.set_auto_gain(True)
 sensor.set_auto_whitebal(True)
 sensor.set_auto_exposure(True)
 current_exposure_time_in_microseconds =  sensor.get_exposure_us()
-
+sensor.skip_frames(time = 2000)
 
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QVGA)
@@ -184,9 +184,9 @@ def crc8(data, len): #function that calculates check sum
              crc = crc << 1
     return crc
 
-data = bytearray(7)
+data = bytearray(9)
 
-def send_data(num1, num2, num3, num4, num5, num6):
+def send_data(num1, num2, num3, num4, num5, num6, num7, num8):
     uart.writechar(255)
     num1 = int((num1) / 3)
     num2 = int((num2) / 3)
@@ -194,6 +194,8 @@ def send_data(num1, num2, num3, num4, num5, num6):
     num4 = int((num4) / 3)
     num5 = int((num5) / 3)
     num6 = int((num6) / 3)
+    num7 = int((num7) / 3)
+    num8 = int((num8) / 3)
 
     if num1 + 127 > 253:
        data[0] = 253
@@ -236,13 +238,31 @@ def send_data(num1, num2, num3, num4, num5, num6):
        data[5] = 0
     else:
        data[5] = num6
+
+    if num7 + 127 > 253:
+       data[6] = 253
+    elif num7 + 127 < 0:
+       data[6] = 0
+    else:
+       data[6] = num7
+
+    if num8 + 127 > 253:
+       data[7] = 253
+    elif num8 + 127 < 0:
+       data[7] = 0
+    else:
+       data[7] = num8
+    if(yellow_piece_distance == 0):
+       data[7] = 250
+    if(blue_piece_distance == 0):
+       data[6] = 250
 #    data[0] = num1
 #    data[1] = num2
 #    data[2] = num3
 #    data[3] = num4
 #    data[4] = num5
 #    data[5] = num6
-    data[6] = crc8(data, 6)
+    data[8] = crc8(data, 8)
 
     uart.writechar(int(data[0]))
     uart.writechar(int(data[1]))
@@ -251,8 +271,29 @@ def send_data(num1, num2, num3, num4, num5, num6):
     uart.writechar(int(data[4]))
     uart.writechar(int(data[5]))
     uart.writechar(int(data[6]))
+    uart.writechar(int(data[7]))
+    uart.writechar(int(data[8]))
 
 
+def find_object(treshold, pixels_t, area_t, _merge, _margin):
+   data = img.find_blobs(treshold, pixels_threshold=pixels_t, area_threshold=area_t, merge=_merge, margin = _margin)
+   if(len(data) > 0):
+      blob = sorted(data, key = lambda b:b.area(), reverse = True)[0]
+      blob_x = -(blob.cx() - center[0])
+      blob_y = -(blob.cy() - center[1])
+      blob_x_test = blob.cx()
+      blob_y_test = blob.cy()
+      blob_distance = linearize(get_distance(blob_x*1, blob_y*1))
+      blob_angle = math.floor(math.atan2(blob_x, blob_y) * 57.3)
+      if(blob_angle > 360):
+          blob_angle -= 360
+      elif(blob_angle < 0):
+          blob_angle += 360
+      if(blob.area() < area_t):
+          blob_distance = 0
+      return [blob.cx(), blob.cy(), blob_angle, blob_distance, blob.x(), blob.y(), blob.w(),blob.h(), get_distance(blob_x, blob_y)]
+   else:
+      return [0,0,0,0,0,0,0,0]
 
 while(True):
     try:
@@ -281,99 +322,35 @@ while(True):
        yellow_is_see = False
        blue_is_see = False
 
-       #detecting yellow gate
-       for blob in img.find_blobs(yellow_threshold, pixels_threshold=25, area_threshold=200, merge=True, margin = 20):#finding gates
-           if(blob[2] * blob[3] > old_area):
-               old_area = blob[2] * blob[3]
-               #print(blob)
-               yellow = [blob[0], blob[1], blob[0] + blob[2], blob[1] + blob[3],(blob[0] + int(blob[2] / 2)), (blob[1] + int(blob[3] / 2)), blob[2], blob[3]]
-               yellow_x = -(blob.cx() - center[0])
-               yellow_y = -(blob.cy() - center[1])
-               yellow_distance = linearize(get_distance(yellow_x, yellow_y))
-               yellow_angle = math.floor(math.atan2(yellow_x, yellow_y) * 57.3)
-               yellow_smth = blob.solidity()
-               if yellow_angle == 0:
-                   yellow_angle += 1
-
-       if(yellow_angle > 360):
-           yellow_angle -= 360
-       elif(yellow_angle < 0):
-           yellow_angle += 360
-
-       if(old_area < 50):
-           yellow_distance = 0
-       old_area = 0
-
-
-
        #detecting blue gate
-       for blob in img.find_blobs(blue_threshold, pixels_threshold=5, area_threshold=200, merge=True, margin = 25): #finding gates
-           if(blob[2] * blob[3] > old_area and blob[2] * blob[3] > 60):
-               old_area = blob[2] * blob[3]
-               #img.draw_rectangle(blob[0], blob[1], blob[2], blob[3], (0, 0, 200), 2)
-               #blue = [blob[0], blob[1], blob[0] + blob[2], blob[1] + blob[3], blob.cx(), blob.cy()]
-               blue = [blob[0], blob[1], blob[0] + blob[2], blob[1] + blob[3],(blob[0] + int(blob[2] / 2)), (blob[1] + int(blob[3] / 2)), blob[2], blob[3]]
-               #blue_x = -(blue[4] - center[0])
-               #blue_y = -(blue[5] - center[1])
-               blue_x = -(blob.cx() - center[0])
-               blue_y = -(blob.cy() - center[1])
-               blue_x_test = blob.cx()
-               blue_y_test = blob.cy()
-               blue_distance = linearize(get_distance(blue_x, blue_y))
-               blue_angle = math.floor(math.atan2(blue_x, blue_y) * 57.3)
-               if(blue_angle > 360):
-                   blue_angle -= 360
-               elif(blue_angle < 0):
-                   blue_angle += 360
-       if(old_area < 50):
-           blue_distance = 0
-       old_area = 0
-       my_blobs = []
-       old_roundness = 0
-       max_area = 0
-       ball_data = [center[0], center[1]]
-       ball_distance = 0
-       for blob in img.find_blobs(red_threshold, pixels_threshold=7, area_threshold=15 , merge=True, margin = 5):
-           if blob.area() >= 3:
-               if blob.compactness() > old_roundness:
-                  #red = [blob[0], blob[1], blob[0] + blob[2], blob[1] +      blob[3],(blob[0] + int(blob[2] / 2)), (blob[1] + int(blob[3] / 2)), blob[2], blob[3]]
-                   old_roundness = blob.compactness()
-                   my_blob = blob
-                   max_area = blob.area()
-                   my_blob_x = blob.cx()
-                   my_blob_y = blob.cy()
-                   ball_data = [blob.cx(), blob.cy()]
-                   ball_x = -(my_blob_x - center[0])
-                   ball_y = -(my_blob_y - center[1])
-                   ball_distance = linearize(get_distance(ball_x, ball_y))
-                   ball_angle = math.floor(math.atan2(ball_x, ball_y) * 57.3)
-                   if(ball_angle > 360):
-                       ball_angle -= 360
-                   elif(ball_angle < 0):
-                       ball_angle += 360
-       #print(max_area)
+       blue_gates = find_object(blue_threshold, 50, 450, True, 30)
+       blue_angle, blue_distance = blue_gates[2], blue_gates[3]
+       blue_piece = find_object(blue_threshold, 20, 50, False, 0)
+       blue_piece_angle, blue_piece_distance = blue_piece[2], blue_piece[3]
+
+       yellow_gates = find_object(yellow_threshold, 50, 500, True, 30)
+       yellow_angle, yellow_distance = yellow_gates[2], yellow_gates[3]
+       yellow_piece = find_object(yellow_threshold, 20, 100, False, 0)
+       yellow_piece_angle, yellow_piece_distance = yellow_piece[2], yellow_piece[3]
+       red_ball = find_object(red_threshold, 3, 7, True, 5)
+       ball_angle, ball_distance = red_ball[2], red_ball[3]
 
 
-       #img.draw_line(yellow[4], yellow[5], blue[4], blue[5], (255, 255, 255), 2) #line between centers of gates
+       img.draw_circle(red_ball[0], red_ball[1], 15, (255, 255, 255), 2)
+       #print(blue_gates)
 
-       img.draw_circle(ball_data[0], ball_data[1], 25, (255, 255, 255), 2)
-
-       if yellow_angle > 359:
-           yellow_angle -= 360
-       if blue_angle > 359:
-           blue_angle -= 360
-       if ball_angle > 359:
-           ball_angle -= 360
        #print(ball_distance)#start from yellow gate
        #send_data(10, 20, 30, 40, 50, 60)
        #print(ball_angle)
-       send_data(yellow_angle, yellow_distance, blue_angle, blue_distance, ball_angle, ball_distance)
+       #print(red_ball, red_ball[3], linearize(red_ball[-1]))
+       send_data(yellow_angle, yellow_distance, blue_angle, blue_distance, ball_angle, ball_distance, blue_piece_angle, yellow_piece_angle)
        #img.draw_circle(blue_x_test, blue_y_test, 3, (255, 255, 255))
        #img.draw_circle(yellow[4], yellow[5], 3, (255, 255, 255))
-       img.draw_rectangle(blue[0], blue[1], blue[6], blue[7], (0, 0, 200), 2)
-       img.draw_rectangle(yellow[0], yellow[1], yellow[6], yellow[7], (200, 200, 0), 2)
+       img.draw_rectangle(blue_gates[4], blue_gates[5], blue_gates[6], blue_gates[7], (0, 0, 200), 2)
+       img.draw_rectangle(yellow_gates[4], yellow_gates[5], yellow_gates[6], yellow_gates[7], (200, 200, 0), 2)
        #if callibrate_center == False:
            #img.draw_circle(ball[4], ball[5], 3, (255, 255, 255))
-       img.draw_circle(center[0], center[1], 3, (255, 255, 255))
+       img.draw_circle(center[0], center[1], 20, (255, 255, 255))
+       img.draw_circle(center[0], center[1], 5, (255, 255, 255))
     except Exception:
-       pass
+       print(1)

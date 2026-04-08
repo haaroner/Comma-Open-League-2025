@@ -16,6 +16,7 @@ namespace usart2
 	extern volatile uint16_t _readCnt;
 	extern volatile uint16_t _sendCnt;
   extern volatile uint8_t _bytesToSend;
+  extern volatile uint8_t _bytesToRead;
   extern volatile uint32_t _tets;
   extern volatile bool _receiver_buffer_overflow_warning;
 }

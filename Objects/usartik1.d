@@ -41,3 +41,5 @@
 .\objects\usartik1.o: .\src\main\project_config.h
 .\objects\usartik1.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\math.h
 .\objects\usartik1.o: D:\keil\sys_files\ARM\ARMCC\Bin\..\include\string.h
+.\objects\usartik1.o: .\src\time_service\time_service.h
+.\objects\usartik1.o: .\src\main\project_config.h

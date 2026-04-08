@@ -5,6 +5,11 @@
 //#include "tools.h"
 namespace Robot
 {
+  enum gyro_type
+  {
+    Razor,
+    BNO055
+  };
   pin led3('E', 7, write_UP); 
   pin led2('E', 9, write_UP); 
   pin led1('E', 11, write_UP); 
@@ -24,8 +29,8 @@ namespace Robot
   pin usart6_tx('C', 6,  uart6);	
   pin usart6_rx('C', 7,  uart6);   
 
-  //pin usart1_tx('A', 9, uart1);
-  //pin usart1_rx('A', 10, uart1);
+  pin usart1_tx('A', 9, uart1);
+  pin usart1_rx('A', 10, uart1);
     
   pin motors_move('B', 1, read_UP);
   //pin gyro_reset('B', 0, read_UP);	
@@ -87,6 +92,7 @@ namespace Robot
     
   camera camera(omni_camera, usart2_tx, usart2_rx);
     
+  BNO BNO_GYRO; 
     
   double _xm, _ym, _zm;  
     
@@ -132,7 +138,7 @@ namespace Robot
   volatile int ball_led_state = 0, ball_led_of_data = 0, ball_led_on_data = 0;
   
   volatile uint32_t _capacitor1_tim = 0, _capacitor2_tim = 0;
-  
+  uint8_t bluetooth_mas[2];
   volatile uint32_t time, button_timers[3], blinking_timer = 0, blinking_durations,
     init_timer = 0, display_timer = 0, loop_delay = 0, 
     old_time = 0, prediction_timer = 0, keck_timer = 0, point_reached_timer = 0, 
@@ -152,6 +158,8 @@ namespace Robot
   volatile float angle_kp, angle_kd, angle_kp2, angle_ki = 0.01;
   
   volatile bool _use_game_zone_restriction = false;
+  
+  volatile uint8_t used_gyro;
   
   volatile int move_angle = 0, gyro = 0,
   robot_x = 0, robot_y = 100, ball_loc_angle = 0, ball_abs_angle = 0, ball_loc_x = 0,
@@ -221,6 +229,8 @@ namespace Robot
   void init_robot(uint8_t __role = 1)
   { 
     if(__role > 2) __role = 1;
+    
+    used_gyro = Razor;
     //time_service::startTime_DOT();
     time_service::init();
     time_service::startTime();
@@ -233,17 +243,20 @@ namespace Robot
     
     control_led(0, OFF);
     
-    //usartik1::usart1Init(230400, 8, 1, 10);//bluetooth
+    usart1::usart1Init(115200, 8, 1);//bluetooth
     usart2::usart2Init(230400, 8, 1);//camera
     usart3::usart3Init(115200, 8, 1);//BLDC
     usart6::usart6Init(115200, 8, 1);//gyro
     
     //adc_voltage.sendMeChannel(15);
+    if(used_gyro == BNO055)
+    {
+      //BNO_GYRO.init();
+    }
     #if USE_DISPLAY
       display.begin();
       display.display();
     #endif
-    
     #if USE_DRIBLER
       dribler_control.pwm(0);
       time_service::delay_ms(500);
@@ -323,25 +336,6 @@ namespace Robot
       return crc;
   }
   
-  void send_bluetooth_data(int _num1, int _num2, int _num3)
-  {
-    if(_num3 < 50)
-      usartik1::abcde(255);
-    else if(_num3 < 100)
-      usartik1::abcde(254);
-    else
-      usartik1::abcde(253);
-    _num1 = constrain(255, 0, int((constrain(200, -200, _num1) / 2) + 100));
-    _num2 = constrain(255, 0, int((constrain(200, -200, _num2) / 2) + 100));
-   // _num3 = constrain(255, 0, int((constrain(200, -200, _num3) / 2) + 100));
-   // uint8_t data[3] = {_num1, _num2, _num3};
-    usartik1::abcde(_num1);
-    usartik1::abcde(_num2);
-    usartik1::abcde((_num1 + _num2) / 2);
-   // usartik1::abcde(_num3);
-    //usartik1::abcde(crc8(data, 3));
-    return;
-  }
   
   void use_dribler(bool _data)
   {
@@ -809,7 +803,7 @@ namespace Robot
     }
     
     if(_point.angle != 255)
-      Robot::setAngle(_point.angle, ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED, 0.3, -0.1, 0.05);
+      Robot::setAngle(_point.angle, ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED, 0.45, -0.1, 0.05);
     
     if(my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)
             Robot::move_speed *= 0.75;
@@ -822,11 +816,11 @@ namespace Robot
     if(_point.significanse == 2 && point_distance < 30)
       move_speed = constrain(60, 0, move_speed);
     
-    point_reached = time_service::getCurTime() - point_reached_timer > 200;
+    point_reached = time_service::getCurTime() - point_reached_timer > 100;
     
     otladka1 = int(point_reached_timer / 1000);
     
-    return (time_service::getCurTime() - point_reached_timer > 200) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
+    return (time_service::getCurTime() - point_reached_timer > 100) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
   }
   
   bool moveToPoint(int _x, int _y, int16_t _speed,  int16_t _x0_angle = -255)
@@ -1006,8 +1000,15 @@ namespace Robot
     wait(1000);
     //mpu.calibrate(200);
     //mpu.setZeroAngle();
+   // if(used_gyro == Razor)
+    //{
     while(usart6::available() == 0);
     gyro_zero_angle = lead_to_degree_borders((usart6::read() * 2));
+    //}
+    //else if(used_gyro == BNO055)
+    //{
+      //gyro_zero_angle = BNO_GYRO.get_yaw();
+    //}
     //mpu.calibrate(200);
     //mpu.setZeroAngle();
     control_led(2, OFF);
@@ -1153,7 +1154,7 @@ namespace Robot
       //motors.moveMotor(0);
       //Robot::wait(500);
       //MotorA.disable_motor();
-      Robot::wait(5000);
+      //Robot::wait(5000);
     }
     else
     {
@@ -1205,10 +1206,10 @@ namespace Robot
             case 2: change_game_state(); break;
             case 3:  
             
-            keck_new(middle_solenoid, two_capasitors, 50);  
-            time_service::delay_ms(10000);
+            keck_new(middle_solenoid, two_capasitors, 20);  
+            time_service::delay_ms(5000);
             keck_new(left_solenoid, two_capasitors, 50);
-            time_service::delay_ms(10000);
+            time_service::delay_ms(5000);
             keck_new(right_solenoid, two_capasitors, 50);     
             wait(1000);
             break;
@@ -1254,9 +1255,9 @@ namespace Robot
               if(_test_dribler_mode == 1)
               {
                 if(_role == 1)
-                  set_dribler_speed(80);
+                  set_dribler_speed(90);
                 else
-                  set_dribler_speed(80);
+                  set_dribler_speed(90);
               }
               else
                 set_dribler_speed(0);
@@ -1290,15 +1291,42 @@ namespace Robot
     }
     display_update();
     display_update_time = time_service::getCurTime() - timer_1000ms;
-//      if(time - timer_1000ms > 1000)
-//      {
-//        image_num = my_abs(image_num - 1);
-//        display.drawImage(image_num);
-//        //display.display();
-//        timer_1000ms = time;
-//      }
   }
- 
+
+  void update_bluetooth_data()
+  {
+    if(Robot::time - Robot::bluetooth_send_timer > 50)
+    {
+      usart1::write(255);
+      bluetooth_mas[0] = constrain(254, 0, (Robot::ball_abs_x / 3) + 150);
+      bluetooth_mas[1] = constrain(254, 0, (Robot::ball_abs_y / 3) + 150);
+      usart1::write(bluetooth_mas[0]);
+      usart1::write(bluetooth_mas[1]);
+      usart1::write(camera.crc8(bluetooth_mas, 2));
+      Robot::bluetooth_send_timer = Robot::time;
+    }
+    
+    if(usart1::available() >= 4)
+    {
+      if(usart1::read() == 255)
+      {
+        uint8_t bluetooth_received_data[3];
+        for(int i = 0; i < 3; i++)
+          bluetooth_received_data[i] = usart1::read();
+        
+        if(bluetooth_received_data[2] == camera.crc8(bluetooth_received_data, 2))
+        {
+          Robot::ball_bluetooth_x = (bluetooth_received_data[0] - 150) * 3;
+          Robot::ball_bluetooth_y = (bluetooth_received_data[1] - 150) * 3 ;
+        }
+      }
+    }   
+    if(ball_seen_time > 20) { 
+            ball_abs_x = Robot::ball_bluetooth_x;
+            Robot::ball_abs_y = Robot::ball_bluetooth_y;
+          }
+  }
+   
  void update()
  {
     old_time = time;
@@ -1307,8 +1335,8 @@ namespace Robot
     
     //mpu.update();
     //gyro = mpu.getAngle();
-   if(usart6::available() > 0)
-    gyro = lead_to_degree_borders((usart6::read() * 2) - gyro_zero_angle);//lead_to_degree_borders(mpu.getAngle());
+     if(usart6::available() > 0)
+      gyro = lead_to_degree_borders((usart6::read() * 2) - gyro_zero_angle);//lead_to_degree_borders(mpu.getAngle());
    // ball.get_data();
     //ball_angle = lead_to_degree_borders(ball.get_angle() + gyro);
     
@@ -1351,6 +1379,8 @@ namespace Robot
     backward_distance = camera.get_backward_distance();
     forward_piece_angle = camera.get_forward_piece_angle();
     
+    update_bluetooth_data();
+    
 //    sub_adc_data = ADC2 -> DR;
 //    if(sub_adc_data != 0) ball_data = sub_adc_data;
     
@@ -1363,26 +1393,6 @@ namespace Robot
       if(ball_data < DEFENDER_BALL_DETECTION_LIGHTNESS) ball_grab_timer = time;
     }
     
-//   if(time - bluetooth_send_timer > 5 && _game_state == 1)
-//    {
-//      if(is_ball_seen_T(100))
-//        send_bluetooth_data(ball_abs_x, ball_abs_y, ball_distance);
-//     bluetooth_send_timer = time;
-//    }
-   
-//    if(usartik1::available() >= 4)
-//    {
-//      for (int i = 0; i < 4; i++)
-//        bluetooth_data[i] = usartik1::read();
-//      if(bluetooth_data[0] >= 253 && my_abs(bluetooth_data[3] - (bluetooth_data[1] + bluetooth_data[2]) / 2) < 2)
-//      {
-//          bluetooth_receive_time = time;
-//          ball_bluetooth_x = int(bluetooth_data[1] - 100) * 2;
-//          ball_bluetooth_y = int(bluetooth_data[2] - 100) * 2;
-//          ball_bluetooth_dist = bluetooth_data[0];
-//        
-//      }
-//    }
 
     
 //    if(camera.getball_seen_time() + 100 < bluetooth_receive_time || (ball_distance > 150 && ball_bluetooth_dist > 253 && time - bluetooth_receive_time < 100))
@@ -1562,44 +1572,15 @@ namespace Robot
       ball_sen_result_data = constrain(10, 0, ball_sen_result_data);
       _ball_led_data = my_abs(_ball_led_data - 1);
       ball_led_adc.write(_ball_led_data);
+      //ball_led_adc.write(1 );
       ball_measure_timer = time;
     }
     
-//    if(time - ball_sen_timer >= 5 && _ball_sen_measured == false)
-//    {
-//      if(_prev_measurement != (time - ball_sen_timer) / 5 - 1)
-//          _ball_sen_raw_data[(time - ball_sen_timer) % 5] = ADC2->DR;
-//      if(_ball_led_data == 1)
-//      {
-//        
-//      }
-//      else
-//      {
-//        _ball_sen_low_data = ADC2->DR;
-//        _ball_sen_raw_data = _ball_sen_low_data;
-//      }
-//      if(my_abs(_ball_sen_high_data - _ball_sen_low_data) < ball_detection_loghtness)   
-//        ball_sen_result_data += 1;     
-//      else
-//        ball_sen_result_data -= 1;  
-//      ball_sen_result_data = constrain(10, 0, ball_sen_result_data);
-//      _ball_sen_measured = true;
-//    }
-//    
-//    if(time - ball_sen_timer >= 50)
-//    {
-//      _ball_led_data = my_abs(_ball_led_data - 1);
-//      ball_led_adc.write(_ball_led_data);
-//      ball_sen_timer = time;
-//      _ball_sen_measured = false;
-//    }
     if(!is_ball_captured())
       ball_captured_timer = time;
     
     if(time - timer10ms >= 10)
     {
-      //goto1
-      //ball_sen_data = DMA_ball_sen.dataReturn(0);
       ball_sen_data_soft = ball_sen_data * ball_sen_data_k + ball_sen_data_soft * (1 - ball_sen_data_k);
       timer10ms = time;
       if(motors_state && !OTLADKA)
@@ -1619,18 +1600,9 @@ namespace Robot
         #else
         motors.disableMotors();
         #endif
-        
-  //      if(dribler_speed < 300 && dribler_speed >= 200) //unnecessary if will delete it later haha 
-  //        dribler_control.pwm(dribler_speed);
       }
       else
       {
-       // motors.disableMotors();
-        //#if USE_DRIBLER
-          //dribler_control.pwm(STOP_DRIBLER_SPEED);
-        //#else
-          //dribler_control.pwm(0);
-        //#endif
       }  
     }
   }

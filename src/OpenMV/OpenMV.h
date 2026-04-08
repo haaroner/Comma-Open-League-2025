@@ -44,6 +44,7 @@ class camera
     bool is_first_data_received();
     bool check_ball_seen(uint32_t _dT = 1000);
     uint32_t get_ball_seen_time();
+    uint8_t crc8(uint8_t* data, int len);
 
 	private:
     bool _camera_pos;
@@ -91,7 +92,6 @@ class camera
     bool _yellow_first_receive, _blue_first_receive;
     bool _ball_is_seen;
 		uint8_t data[9];
-		uint8_t crc8(uint8_t* data, int len);
     uint8_t _state;
     uint32_t _ball_d_timer, _ball_timer;
     float _ball_k;

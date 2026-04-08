@@ -61,8 +61,8 @@ class BLDC
       //else if(speed > 5 && speed <= 10)
         //send_command(_Motor_index, 11, _STOP_byte);
       //else
-      if(speed > 100.0) speed = 100.0;
-      if(speed < -100.0) speed = -100.0;
+      if(speed > 95.0) speed = 95.0;
+      if(speed < -95.0) speed = -95.0;
       speed *= _max_speed / 100.0;
       if(speed < 0.01 && speed > -0.01) speed = 0;
       //if(speed > 1020) speed = 1020;

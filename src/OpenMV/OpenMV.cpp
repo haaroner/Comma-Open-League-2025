@@ -80,7 +80,7 @@ void camera::getData()
 {
   if(_camera_pos == omni_camera)
   {
-    if(usart2::available() > 9)
+    if(usart2::available() >= 9)
     {
       camera_data = usart2::read();
       if(camera_data == 255)
