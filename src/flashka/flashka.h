@@ -6,10 +6,10 @@
 
 void write_to_FLASH(uint8_t _data)
 {
-//  FLASH_Unlock();
-//  FLASH_EraseSector(FLASH_Sector_11, VoltageRange_3);
-//  FLASH_ProgramWord(STANDART_PAGE_WRITING_ADDRESS, _data);
-//  FLASH_Lock();
+  FLASH_Unlock();
+  FLASH_EraseSector(FLASH_Sector_11, VoltageRange_3);
+  FLASH_ProgramWord(STANDART_PAGE_WRITING_ADDRESS, _data);
+  FLASH_Lock();
 }
 
 uint32_t read_from_FLASH()

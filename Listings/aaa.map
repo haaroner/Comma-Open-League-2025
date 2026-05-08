@@ -45,6 +45,10 @@ Section Cross References
     main.o(i._Z14sum_of_vectorsstst) refers to daddsub_clz.o(x$fpl$dadd) for __aeabi_dadd
     main.o(i._Z14sum_of_vectorsstst) refers to sqrt.o(i.__hardfp_sqrt) for __hardfp_sqrt
     main.o(i._Z14sum_of_vectorsstst) refers to main.o(.data) for x1
+    main.o(i._Z14write_to_FLASHh) refers to stm32f4xx_flash.o(i.FLASH_Unlock) for FLASH_Unlock
+    main.o(i._Z14write_to_FLASHh) refers to stm32f4xx_flash.o(i.FLASH_EraseSector) for FLASH_EraseSector
+    main.o(i._Z14write_to_FLASHh) refers to stm32f4xx_flash.o(i.FLASH_ProgramWord) for FLASH_ProgramWord
+    main.o(i._Z14write_to_FLASHh) refers to stm32f4xx_flash.o(i.FLASH_Lock) for FLASH_Lock
     main.o(i._Z15get_y_from_line4linef) refers to f2d.o(x$fpl$f2d) for __aeabi_f2d
     main.o(i._Z15get_y_from_line4linef) refers to dmul.o(x$fpl$dmul) for __aeabi_dmul
     main.o(i._Z15get_y_from_line4linef) refers to daddsub_clz.o(x$fpl$dadd) for __aeabi_dadd
@@ -2648,7 +2652,7 @@ Removing Unused input sections from the image.
     Removing main.o(i._Z12convert_datadd), (160 bytes).
     Removing main.o(i._Z12new_velocityi), (220 bytes).
     Removing main.o(i._Z13is_in_bordersiii), (36 bytes).
-    Removing main.o(i._Z14write_to_FLASHh), (2 bytes).
+    Removing main.o(i._Z14write_to_FLASHh), (36 bytes).
     Removing main.o(i._Z21get_angle_from_points5pointS_S_), (86 bytes).
     Removing main.o(i._Z24calculate_defender_speedf), (196 bytes).
     Removing main.o(i._Z29calculate_angle_near_side_outssdss), (464 bytes).
@@ -3589,7 +3593,7 @@ Removing Unused input sections from the image.
     Removing ssd1306.o(.data__ZZN7SSD130621drawFastVLineInternalEssstE8postmask), (8 bytes).
     Removing ssd1306.o(.constdata__ZTS7SSD1306), (9 bytes).
 
-947 unused section(s) (total 73047 bytes) removed from the image.
+947 unused section(s) (total 73081 bytes) removed from the image.
 
 ==============================================================================
 

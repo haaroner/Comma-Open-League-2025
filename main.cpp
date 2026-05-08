@@ -60,7 +60,7 @@ int main()
   
   Robot::ball_led_adc.setBit();
   point challenge_point(0, 75); 
-  role = 2;
+  role = 1;
   Robot::init_robot(role);
   Robot::set_dribler_speed(0);
   Robot::wait(100);
@@ -1090,10 +1090,17 @@ int main()
         if(attacker_state == 1)
         {
           Robot::enable_trajectory(false);
+          
           Robot::moveRobotAbs(
           lead_to_degree_borders(Robot::ball_abs_angle + 
           exponential_detour(Robot::ball_abs_angle, Robot::ball_distance, 
           0.45, 0.4, 0.35, 0.7)), 70);
+          /*move_angle = Robot::ball_abs_angle + 
+          exponential_detour(Robot::ball_abs_angle, Robot::ball_distance, 
+          0.45, 0.4, 0.35, 0.7)*/
+          //move_speed = 70
+          //All ANGLES (move_angle, ball_abs_angle) are absolute
+          
           if(Robot::ball_distance < 17 && my_abs(Robot::ball_abs_angle) > 20)
             Robot::constrainRobotSpeed(20, 0);
           //fixed_velocity(Robot::ball_distance, my_abs(Robot::ball_loc_angle)));
