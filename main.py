@@ -13,22 +13,21 @@ center2 = [165, 117]#[83,58]#[160, 120]
 
 robot = 1
 if robot == 1 or robot == 3:#attacker
-
     yellow_threshold = [(0, 100, -15, 127, 12, 127)]
-    blue_threshold = [(0, 100, -128, 3, -128, -13)]
+    blue_threshold = [(0, 100, -128, 127, -128, -10)]
     red_threshold = [(0, 100, 15, 127, -128, 127)]#( 62, 100, 46, 127, -128, 40)
 
-    white = (63, 60, 63)
+    white = (63, 60, 62)
 
     center = center1
     EXPOSURE_TIME_SCALE = 0.8
     img_radius = 131#65#140
     robot_radius = 19#9#18
     my_gain = 25
-    exposure = 90_000
+    exposure = 80_000
 else:
     yellow_threshold = [(0, 100, -6, 127, 28, 127)]
-    blue_threshold = [(0, 38, -128, 127, -128, -15)]
+    blue_threshold = [(0, 100, 6, 127, -128, -33)]
     red_threshold = [(0, 100, 44, 127, -128, 127)]
 
     white = (-3.5, -6, -0.3)

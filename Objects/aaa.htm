@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\aaa.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\aaa.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat Apr 25 18:55:53 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed May 13 14:13:17 2026
 <BR><P>
 <H3>Maximum Stack Usage =        872 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1879,7 +1879,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::add_stop_to_route(int, int, int, unsigned char)
 </UL>
 
-<P><STRONG><a name="[118]"></a>Robot::init_robot(unsigned char)</STRONG> (Thumb, 384 bytes, Stack size 8 bytes, main.o(i._ZN5Robot10init_robotEh))
+<P><STRONG><a name="[118]"></a>Robot::init_robot(unsigned char)</STRONG> (Thumb, 392 bytes, Stack size 8 bytes, main.o(i._ZN5Robot10init_robotEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = Robot::init_robot(unsigned char) &rArr; usart6::usart6Init(unsigned, unsigned char, float) &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306::display()
@@ -1921,7 +1921,7 @@ Global Symbols
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::init_robot(unsigned char)
 </UL>
 
-<P><STRONG><a name="[124]"></a>Robot::moveToPoint(point, short, short, short, short)</STRONG> (Thumb, 814 bytes, Stack size 96 bytes, main.o(i._ZN5Robot11moveToPointE5pointssss))
+<P><STRONG><a name="[124]"></a>Robot::moveToPoint(point, short, short, short, short)</STRONG> (Thumb, 820 bytes, Stack size 96 bytes, main.o(i._ZN5Robot11moveToPointE5pointssss))
 <BR><BR>[Stack]<UL><LI>Max Depth = 456<LI>Call Chain = Robot::moveToPoint(point, short, short, short, short) &rArr; get_angle_to_point(point, point) &rArr; std::pow(double, int) &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;time_service::getCurTime()
@@ -1987,7 +1987,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12b]"></a>Robot::turn_to_gates(unsigned, unsigned char)</STRONG> (Thumb, 170 bytes, Stack size 32 bytes, main.o(i._ZN5Robot13turn_to_gatesEjh))
+<P><STRONG><a name="[12b]"></a>Robot::turn_to_gates(unsigned, unsigned char)</STRONG> (Thumb, 180 bytes, Stack size 32 bytes, main.o(i._ZN5Robot13turn_to_gatesEjh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 608<LI>Call Chain = Robot::turn_to_gates(unsigned, unsigned char) &rArr; Robot::update() &rArr; camera::calculate_pos(short, bool) &rArr; camera::get_angle_to_point(short, short, short, short) &rArr; std::pow(double, int) &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;time_service::getCurTime()
@@ -2126,7 +2126,7 @@ Global Symbols
 <LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::enable_trajectory(bool)
 </UL>
 
-<P><STRONG><a name="[142]"></a>Robot::update_bluetooth_data()</STRONG> (Thumb, 226 bytes, Stack size 16 bytes, main.o(i._ZN5Robot21update_bluetooth_dataEv))
+<P><STRONG><a name="[142]"></a>Robot::update_bluetooth_data()</STRONG> (Thumb, 256 bytes, Stack size 16 bytes, main.o(i._ZN5Robot21update_bluetooth_dataEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Robot::update_bluetooth_data() &rArr; usart1::write(unsigned char) &rArr; USART_ITConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart1::available()
@@ -3253,7 +3253,7 @@ Global Symbols
 <LI><a href="#[183]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan
 </UL>
 
-<P><STRONG><a name="[80]"></a>main</STRONG> (Thumb, 9500 bytes, Stack size 264 bytes, main.o(i.main))
+<P><STRONG><a name="[80]"></a>main</STRONG> (Thumb, 8918 bytes, Stack size 264 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 872<LI>Call Chain = main &rArr; Robot::turn_to_gates(unsigned, unsigned char) &rArr; Robot::update() &rArr; camera::calculate_pos(short, bool) &rArr; camera::get_angle_to_point(short, short, short, short) &rArr; std::pow(double, int) &rArr; __hardfp_pow &rArr; sqrt &rArr; _dsqrt &rArr; __fpl_dnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pin::resetBit()
@@ -3300,11 +3300,9 @@ Global Symbols
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exponential_detour(double, double, double, double, double, double)
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sum_of_vectors(short, unsigned short, short, unsigned short)
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fixed_velocity(int, int)
-<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2iz
-<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
@@ -3415,7 +3413,6 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BLDC::set_speed_percent(float)
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motors::moveRobot(double, double, double, double, unsigned, unsigned)
 <LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;camera::calculate_pos(short, bool)
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::update()
 <LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::moveToPoint(point, short, short, short, short)
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_lines_crosspoint(line, line)
@@ -3711,7 +3708,6 @@ Global Symbols
 <LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart2::usart2Init(unsigned, unsigned char, float)
 <LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usart1::usart1Init(unsigned, unsigned char, float)
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motors::moveRobot(double, double, double, double, unsigned, unsigned)
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::update()
 <LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Robot::moveToPoint(point, short, short, short, short)
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_lines_crosspoint(line, line)

@@ -152,6 +152,8 @@ namespace Robot
   volatile uint32_t otladka1 = 0;
   volatile int otladka2 = 0;
   
+  volatile uint32_t _bluetooth_receive_timer = 0;
+  
   volatile int x0_angle, forward_piece_angle = 0;
   
   volatile float angle_p, angle_d, angle_i, angle_e, angle_eold, angle_u;
@@ -296,7 +298,7 @@ namespace Robot
       max_y = ATTACKER_MAX_Y;
       min_y = ATTACKER_MIN_Y;
     }
-    else if(_role == 2)
+    else if(_role == 2 || _role == 3)
     {
       dribler_acc = DEFENDER_DRIBLER_ACCELERATION;
       max_trajectory_linear_speed = DEFENDER_MAX_LINEAR_TRAJECTORY_SPEED;
@@ -808,7 +810,7 @@ namespace Robot
     if(my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)
             Robot::move_speed *= 0.75;
     
-    if(((point_distance > 10  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)&& _point.significanse == 2) || 
+    if(((point_distance > 15  || my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) > 20)&& _point.significanse == 2) || 
        (point_distance > 15  && _point.significanse == 1) ||
        (point_distance > 25 && _point.significanse == 0)) 
       point_reached_timer = time_service::getCurTime();
@@ -820,7 +822,7 @@ namespace Robot
     
     otladka1 = int(point_reached_timer / 1000);
     
-    return (time_service::getCurTime() - point_reached_timer > 100) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
+    return (time_service::getCurTime() - point_reached_timer > 50) && (my_abs(lead_to_degree_borders(_point.angle - Robot::gyro)) < 20);
   }
   
   bool moveToPoint(int _x, int _y, int16_t _speed,  int16_t _x0_angle = -255)
@@ -981,16 +983,16 @@ namespace Robot
   void turn_to_gates(uint32_t _duration, uint8_t _rotation_speed)
   {
     uint32_t _start_time = time_service::getCurTime(), out_timer = time_service::getCurTime();
-    while((time_service::getCurTime() - _start_time < _duration) && time_service::getCurTime() - out_timer < 50)
+    while((time_service::getCurTime() - _start_time < _duration) && time_service::getCurTime() - out_timer < 45)
     {
-      if(my_abs(lead_to_degree_borders(gyro - constrain(45, -45, forward_piece_angle))) > 8)
+      if(my_abs(lead_to_degree_borders(gyro - constrain(45, -45, forward_piece_angle))) > 15 || time_service::getCurTime() - _start_time < 200)
         out_timer = time_service::getCurTime();
       
-      Robot::setAngle(constrain(45, -45, forward_piece_angle), _rotation_speed, 0.3, -0.1, 0.05);
+      Robot::setAngle(constrain(90, -90, forward_piece_angle), _rotation_speed, 0.3, -0.1, 0.05);
       Robot::update();
     }
     Robot::rotateRobot(0, 0);
-    Robot::wait(20);
+    Robot::wait(100);
   }
   
   void callibrate_gyro()
@@ -1295,7 +1297,7 @@ namespace Robot
 
   void update_bluetooth_data()
   {
-    if(Robot::time - Robot::bluetooth_send_timer > 50)
+    if(Robot::time - Robot::bluetooth_send_timer > 50 && Robot::_game_state == 1)
     {
       usart1::write(255);
       bluetooth_mas[0] = constrain(254, 0, (Robot::ball_abs_x / 3) + 150);
@@ -1317,12 +1319,13 @@ namespace Robot
         if(bluetooth_received_data[2] == camera.crc8(bluetooth_received_data, 2))
         {
           Robot::ball_bluetooth_x = (bluetooth_received_data[0] - 150) * 3;
-          Robot::ball_bluetooth_y = (bluetooth_received_data[1] - 150) * 3 ;
+          Robot::ball_bluetooth_y = (bluetooth_received_data[1] - 150) * 3;
+          _bluetooth_receive_timer = Robot::time;
         }
       }
     }   
-    if(ball_seen_time > 20) { 
-            ball_abs_x = Robot::ball_bluetooth_x;
+    if(ball_seen_time > 100 && (Robot::time - _bluetooth_receive_timer <= 100)) { 
+            Robot::ball_abs_x = Robot::ball_bluetooth_x;
             Robot::ball_abs_y = Robot::ball_bluetooth_y;
           }
   }

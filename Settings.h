@@ -21,7 +21,7 @@
 
 
 /////////////////////////////////////////////////////////
-#define ATTACKER_SHORT_TRAJECTORY_CHANCE 7 //0...10
+#define ATTACKER_SHORT_TRAJECTORY_CHANCE 9 //0...10
 
 #define ATTACKER_BALL_THRESHOLD -5
 #define DEFENDER_BALL_THRESHOLD 0 //set both to zero and test it
@@ -31,9 +31,9 @@
 //all speeds are in %, you can change in anyway you want
 //in Tomsk linear speeds were almost 2 times higher
 #define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 70//60
-#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 20//15
+#define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 15//15
 #define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 10//12
-#define ATTACKER_TRAJECTORY_ACCELERATION 10
+#define ATTACKER_TRAJECTORY_ACCELERATION 25
 
 /////////////////////////////////////////////////////////////////////
 
