@@ -61,8 +61,8 @@
 #define ROBOT_MAX_RIGHT_Y 220
 #define ROBOT_MAX_LEFT_Y 200
 
-#define ATTACKER_MAX_X 52
-#define ATTACKER_MIN_X -50
+#define ATTACKER_MAX_X 42
+#define ATTACKER_MIN_X -47
 
 #define ATTACKER_MAX_Y 215
 #define ATTACKER_MIN_Y 20

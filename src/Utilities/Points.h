@@ -15,7 +15,7 @@ namespace Points
   point long_ricochet_right(58, 60, 40, 2);
   point long_ricochet_left(-58, 60, -40, 2);
   
-  point back_kick(20, 170, 125, 1 );
+  point back_kick(20, 165, 125, 1 );
   
   point speed_1(8, 15);
   point speed_2(25, 60);
@@ -27,7 +27,7 @@ namespace Points
   point a_cur(16, 0);
   
   point b_min(40, 50);
-  point b_max(40, 85);
+  point b_max(40, 75);
   
   point b_cur(40, 0);
   

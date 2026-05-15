@@ -60,7 +60,7 @@ int main()
   
   Robot::ball_led_adc.setBit();
   point challenge_point(0, 75); 
-  role = 2;//////////////////////////////////////////
+  role = 1;//////////////////////////////////////////
   Robot::init_robot(role);
   Robot::set_dribler_speed(0);
   Robot::wait(100);
@@ -267,7 +267,7 @@ int main()
                 Robot::wait(350);
                 if(_daleko != 2)
                   _daleko = 0;
-                if(Robot::forward_distance < 50)
+                if(Robot::forward_distance < 70)
                   attacker_state = 4;
                 else 
                   attacker_state = 2;
@@ -402,12 +402,12 @@ int main()
             if(attacker_2_state_side != my_sgn(attacker_start_2_state_point.x))
             {
               Robot::add_stop_to_route(10 * my_sgn(attacker_start_2_state_point.x), 150, -160 * my_sgn(attacker_2_state_side), 0);
-              Robot::add_stop_to_route(30 * attacker_2_state_side, 150, 180, 0);             
+              Robot::add_stop_to_route(25 * attacker_2_state_side, 150, 180, 0);             
               attacker_2_state_trajectory_type = long_trajectory;
             }
             else
             {
-              Robot::add_stop_to_route(35 * my_sgn(attacker_2_state_side), 
+              Robot::add_stop_to_route(25 * my_sgn(attacker_2_state_side), 
             attacker_start_2_state_point.y, 180 * my_sgn(attacker_2_state_side), 0);
               
               attacker_2_state_trajectory_type = short_trajectory;
@@ -431,13 +431,13 @@ int main()
           if(Robot::get_trajectory_length() < 30)
           {
             Robot::changeSmoothness(2);
-            Robot::set_dribler_speed(77, false, 3);
+            Robot::set_dribler_speed(100, false, 3);
             Robot::enable_game_zone_restriction(true);//!!!!!!!!!!!!!!!!!!!!!!!
           }
           else
           {
             Robot::changeSmoothness(1);
-            Robot::set_dribler_speed(77, false, 3);
+            Robot::set_dribler_speed(100, false, 3);
             Robot::enable_game_zone_restriction(true);
           }
           
@@ -454,12 +454,12 @@ int main()
             if(false)
             {
               _daleko = 1;
-              Robot::set_dribler_speed(90);
+              Robot::set_dribler_speed(95);
               //Robot::wait(50);
               attacker_state = 4;
               _attacker_4_tim = Robot::time;
             }
-            else if(/*Robot::time % 10 <= 9*/ true) // 0
+            else if(/*/*Robot::time % 10 <= 9 true*/Robot::robot_x < 0) // 0
             {
               //Robot::set_dribler_speed(40, true);
               //Robot::wait(500);
@@ -470,7 +470,8 @@ int main()
               Robot::set_dribler_speed(0, true);
               Robot::wait(1);
               */
-              Robot::set_dribler_speed(100, false, 30);//160 400
+              Robot::set_dribler_speed(110, true, 30);//160 400
+              Robot::wait(100);
               Robot::wait(250, true, 105*my_sgn(Robot::robot_x), 20);
               Robot::moveRobotAbs(0, 0);
               //Robot::wait(250);
@@ -480,7 +481,7 @@ int main()
                 Robot::keck_new(left_solenoid, R_capacitor, 10);//6
               }
               else {
-                Robot::wait(750, true, 0, 50, -45);
+                Robot::wait(750, true, 0, 40, -65);
                 //Robot::rotateRobot(15, 15);
                 //Robot::wait(250);
                 Robot::keck_new(right_solenoid, L_capacitor, 5);
@@ -498,17 +499,17 @@ int main()
             }
             else
             {
-              Robot::wait(1);
-              Robot::setAngle(90 * my_sgn(attacker_2_state_side), 20); 
-              Robot::set_dribler_speed(90, true);
-              Robot::wait(50);
-              Robot::moveRobotAbs(-100 * my_sgn(attacker_2_state_side), 80);
-              Robot::set_dribler_speed(130, true);
-              Robot::enable_game_zone_restriction(true);
-              Robot::wait(600);
-              Robot::moveRobotAbs(0, 0);
-              Robot::wait(100);
-              Robot::enable_game_zone_restriction(false);
+//              Robot::wait(1);
+//              Robot::setAngle(90 * my_sgn(attacker_2_state_side), 20); 
+//              Robot::set_dribler_speed(90, true);
+//              Robot::wait(50);
+//              Robot::moveRobotAbs(-100 * my_sgn(attacker_2_state_side), 80);
+//              Robot::set_dribler_speed(130, true);
+//              Robot::enable_game_zone_restriction(true);
+//              Robot::wait(600);
+//              Robot::moveRobotAbs(0, 0);
+//              Robot::wait(100);
+//              Robot::enable_game_zone_restriction(false);
               _daleko = 2;
               attacker_state = 4;
             }
@@ -552,7 +553,7 @@ int main()
           Robot::enable_trajectory(false);
           Robot::moveRobotAbs(0,0);
           //Robot::wait(50);
-          Robot::turn_to_gates(1000, 35);
+          Robot::turn_to_gates(1000, 32);
 //          if(_daleko !=0)
 //            Robot::wait(1000, true, Robot::forward_angle, 20, Robot::forward_angle);
 //          else
@@ -562,7 +563,7 @@ int main()
           Robot::wait(25);
           Robot::set_dribler_speed(60, true);
           Robot::wait(20);
-          Robot::keck_new(middle_solenoid, two_capasitors, 25);
+          Robot::keck_new(middle_solenoid, two_capasitors, 20);
           attacker_state = 1;
           spas = Robot::time;
         }
@@ -749,6 +750,7 @@ int main()
              Robot::set_dribler_speed(0, true);
              Robot::wait(10);
              Robot::keck_new(middle_solenoid, two_capasitors, 30);
+             Robot::wait(300);
              defender_state = 1;
              defender_old_state = 2;
            }
@@ -1087,6 +1089,8 @@ int main()
           if(attacker_old_state != 2)
           {
             attacker_2_state_side = my_sgn(Robot::robot_x);
+            if(Robot::time % 10 <= 3)
+              attacker_2_state_side *= -1;
             attacker_use_detour = 0;
             attacker_start_detour_timer = Robot::time;
             attacker_stop_detour_timer = Robot::time;

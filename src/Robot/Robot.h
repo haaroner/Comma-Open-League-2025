@@ -1208,11 +1208,11 @@ namespace Robot
             case 2: change_game_state(); break;
             case 3:  
             
-            keck_new(middle_solenoid, two_capasitors, 20);  
-            time_service::delay_ms(5000);
-            keck_new(left_solenoid, two_capasitors, 50);
-            time_service::delay_ms(5000);
-            keck_new(right_solenoid, two_capasitors, 50);     
+            keck_new(middle_solenoid, two_capasitors, 10); //20 
+            time_service::delay_ms(1000);
+            keck_new(left_solenoid, two_capasitors, 20);//50
+            time_service::delay_ms(1000);
+            keck_new(right_solenoid, two_capasitors, 20);//50  
             wait(1000);
             break;
             case 4: 
