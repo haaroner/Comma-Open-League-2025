@@ -61,7 +61,7 @@ namespace time_service
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLQ_2;																							//SOURCE HSE = 8 MHz
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLM_2;																							//8 / 4 = 2MHz
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLN_3 | RCC_PLLCFGR_PLLN_5 | RCC_PLLCFGR_PLLN_7;		//2 * 168 = 336MHz
-    RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP; 																							//336 / 2 = 168MHz
+    RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP; 																					//336 / 2 = 168MHz
     
     RCC->CR |= RCC_CR_PLLON;								//enable PLL
     while(!(RCC->CR & RCC_CR_PLLRDY));			//wait till PLL is ready

@@ -28,9 +28,14 @@ namespace Robot
   pin spi2_mosi('B', 15, write_DOWN);
   pin usart6_tx('C', 6,  uart6);	
   pin usart6_rx('C', 7,  uart6);   
+  
+  pin rcj_0('D', 0, read_DOWN);
+  pin rcj_1('D', 1, read_DOWN);
 
   pin usart1_tx('A', 9, uart1);
   pin usart1_rx('A', 10, uart1);
+  
+  pin usart4_rx('A', 1, uart4);
     
   pin motors_move('B', 1, read_UP);
   //pin gyro_reset('B', 0, read_UP);	
@@ -104,9 +109,9 @@ namespace Robot
   
   PID angle_pid(-0.07, -0, 0, 0);
   Queue trajectory;
-
+  uint32_t kecking_timer = 0;
   uint32_t timer_100ms; 
-   
+  int32_t front_camera_data, front_camera_raw_data;
   void init_robot(uint8_t _role);
   void callibrate_gyro();
   void control_led(uint8_t _led_num, bool _data);
@@ -139,6 +144,9 @@ namespace Robot
   
   volatile uint32_t _capacitor1_tim = 0, _capacitor2_tim = 0;
   uint8_t bluetooth_mas[2];
+  
+  uint32_t front_camera_timer = 0;
+  
   volatile uint32_t time, button_timers[3], blinking_timer = 0, blinking_durations,
     init_timer = 0, display_timer = 0, loop_delay = 0, 
     old_time = 0, prediction_timer = 0, keck_timer = 0, point_reached_timer = 0, 
@@ -248,6 +256,7 @@ namespace Robot
     usart1::usart1Init(115200, 8, 1);//bluetooth
     usart2::usart2Init(230400, 8, 1);//camera
     usart3::usart3Init(115200, 8, 1);//BLDC
+    usart4::usart4Init(115200, 8, 1);
     usart6::usart6Init(115200, 8, 1);//gyro
     
     //adc_voltage.sendMeChannel(15);
@@ -426,7 +435,8 @@ namespace Robot
   
    uint8_t keck_new(uint8_t _solenoid, uint8_t _num_of_capacitors, uint32_t _power_ms = 5)
   {
-    _power_ms = constrain(500, 0, _power_ms);
+    if(Robot::time - kecking_timer > 1000) {
+    _power_ms = constrain(1000, 0, _power_ms);
     uint8_t _capacitor1_status = 0, _capacitor2_status = 0, total_capacitor_status = 0;
     /*check charge status of capacitors*/
     _capacitor1_status = (Robot::time - _capacitor1_tim) > CAPACITOR_MIN_CHARGE_TIME_MS;
@@ -463,6 +473,7 @@ namespace Robot
       time_service::delay_ms(_power_ms);
       kecker_kick.resetBit();
       time_service::delay_ms(1);
+    kecking_timer = Robot::time;
     //}
     
     /*reset all control pins*/
@@ -472,7 +483,9 @@ namespace Robot
     kecker_cap_1.resetBit();
     kecker_cap_2.resetBit();
     kecker_kick.resetBit();
+
     return total_capacitor_status;
+  }
   }
   
   void keck(uint8_t _duration = 50)
@@ -1208,11 +1221,11 @@ namespace Robot
             case 2: change_game_state(); break;
             case 3:  
             
-            keck_new(middle_solenoid, two_capasitors, 10); //20 
+            keck_new(middle_solenoid, two_capasitors, 1000); //20 
             time_service::delay_ms(1000);
-            keck_new(left_solenoid, two_capasitors, 20);//50
+            keck_new(left_solenoid, two_capasitors, 2000);//50
             time_service::delay_ms(1000);
-            keck_new(right_solenoid, two_capasitors, 20);//50  
+            keck_new(right_solenoid, two_capasitors, 2000);//50  
             wait(1000);
             break;
             case 4: 
@@ -1375,6 +1388,15 @@ namespace Robot
     
     is_ball_seen = camera.check_ball_seen();
     ball_seen_time = Robot::time - Robot::camera.get_ball_seen_time();
+    
+    if(usart4::available()) {
+      
+      front_camera_raw_data = usart4::read();
+      if(front_camera_raw_data != 255) {
+      front_camera_data = front_camera_raw_data;
+        front_camera_timer = Robot::time;
+      }
+    }
     
     forward_angle = camera.get_forward_angle();
     forward_distance = camera.get_forward_distance();

@@ -21,7 +21,7 @@
 
 
 /////////////////////////////////////////////////////////
-#define ATTACKER_SHORT_TRAJECTORY_CHANCE 9 //0...10
+#define ATTACKER_SHORT_TRAJECTORY_CHANCE 5 //0...10
 
 #define ATTACKER_BALL_THRESHOLD -5
 #define DEFENDER_BALL_THRESHOLD 0 //set both to zero and test it
@@ -30,10 +30,10 @@
 //trajectory settings
 //all speeds are in %, you can change in anyway you want
 //in Tomsk linear speeds were almost 2 times higher
-#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 70//60
+#define ATTACKER_MAX_LINEAR_TRAJECTORY_SPEED 65//60
 #define ATTACKER_MIN_LINEAR_TRAJECTORY_SPEED 15//15
-#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 10//12
-#define ATTACKER_TRAJECTORY_ACCELERATION 25
+#define ATTACKER_MAX_ANGULAR_TRAJECTORY_SPEED 8//12
+#define ATTACKER_TRAJECTORY_ACCELERATION 20
 
 /////////////////////////////////////////////////////////////////////
 
@@ -44,6 +44,8 @@
 #define DEFENDER_MIN_LINEAR_TRAJECTORY_SPEED 15
 #define DEFENDER_MAX_ANGULAR_TRAJECTORY_SPEED 5
 #define DEFENDER_STANDART_ANGULAR_KP -0.2
+
+#define TARGET_DEFFENDER_WALL_ANGLE 30
 
 //just dreams
 #define CHALLENGE false
@@ -61,19 +63,19 @@
 #define ROBOT_MAX_RIGHT_Y 220
 #define ROBOT_MAX_LEFT_Y 200
 
-#define ATTACKER_MAX_X 42
-#define ATTACKER_MIN_X -47
+#define ATTACKER_MAX_X 47
+#define ATTACKER_MIN_X -49
 
 #define ATTACKER_MAX_Y 215
 #define ATTACKER_MIN_Y 20
 
-#define DEFENDER_MAX_X 45
-#define DEFENDER_MIN_X -45
+#define DEFENDER_MAX_X 52
+#define DEFENDER_MIN_X -52
 #define DEFENDER_MAX_Y 180
-#define DEFENDER_MIN_Y 25
+#define DEFENDER_MIN_Y 10
 /////////////////////////////////////////////////
 
-#define DEFENDER_MIN_ANGLE_ERR 10
+#define DEFENDER_MIN_ANGLE_ERR 5
 
 #define ROBOT_MAX_X_DIFF 0
 #define ROBOT_MIN_X_DIFF 0
@@ -100,7 +102,7 @@
 #define DEFENDER_BALL_DETECTION_LIGHTNESS 300
 
 #define BUTTON_MIN_PRESSING_TIME_MS 65
-
+  
 #define BALL_K1
 #define BALL_K2
 #define BALL_K3

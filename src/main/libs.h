@@ -6,6 +6,7 @@
 #include "usart6.h"
 #include "usart3.h"
 #include "usart2.h"
+#include "usart4.h"
 #include "usartik1.h"
 #include "soft_i2c.h"
 #include "motor.h"

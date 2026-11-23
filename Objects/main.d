@@ -55,6 +55,8 @@
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\UART\usart2\usart2.h
 .\objects\main.o: .\src\main\project_config.h
+.\objects\main.o: .\src\UART\usart4\usart4.h
+.\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\usartik1\usartik1.h
 .\objects\main.o: .\src\main\project_config.h
 .\objects\main.o: .\src\i2c\soft_i2c.h

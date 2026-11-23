@@ -12,6 +12,7 @@ enum pin_function
   uart1,
   uart2,
   uart3,
+  uart4,
   uart6,
   i2c, 
   spi1,

@@ -13,18 +13,18 @@ center2 = [165, 117]#[83,58]#[160, 120]
 
 robot = 1
 if robot == 1 or robot == 3:#attacker
-    yellow_threshold = [(0, 100, -15, 127, 12, 127)]
-    blue_threshold = [(0, 100, -128, 127, -128, -10)]
-    red_threshold = [(0, 100, 15, 127, -128, 127)]#( 62, 100, 46, 127, -128, 40)
+    yellow_threshold = [(0, 100, -8, 16, 7, 127)]#[(0, 100, -15, 127, 12, 127)]
+    blue_threshold = [(0, 100, -128, 127, -128, -19)]
+    red_threshold = [(0, 100, 23, 127, -128, 127)  ]#( 62, 100, 46, 127, -128, 40)
 
-    white = (63, 60, 62)
+    white = (62, 59, 63)
 
     center = center1
     EXPOSURE_TIME_SCALE = 0.8
     img_radius = 131#65#140
     robot_radius = 19#9#18
     my_gain = 25
-    exposure = 80_000
+    exposure = 70_000
 else:
     yellow_threshold = [(0, 100, -6, 127, 28, 127)]
     blue_threshold = [(0, 100, 6, 127, -128, -33)]
@@ -322,7 +322,7 @@ while(True):
        blue_is_see = False
 
        #detecting blue gate
-       blue_gates = find_object(blue_threshold, 50, 450, True, 30)
+       blue_gates = find_object(blue_threshold, 50, 450, True, 10)
        blue_angle, blue_distance = blue_gates[2], blue_gates[3]
        blue_piece = find_object(blue_threshold, 20, 50, False, 0)
        blue_piece_angle, blue_piece_distance = blue_piece[2], blue_piece[3]

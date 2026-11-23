@@ -22,12 +22,102 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 C:\Users\Clown\Desktop\GIT\Comma-Open-League-2025-main\aaa.uvprojx
-Project File Date:  10/04/2025
+Project File Date:  11/21/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil\sys_files\ARM\ARMCC\Bin'
 Build target 'Target 1'
-".\Objects\aaa.axf" - 0 Error(s), 0 Warning(s).
+compiling main.cpp...
+.\src\main\tools.h(118): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\BLDC_Motor\BLDC_Motor.h(177): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\BLDC_Motor\BLDC_Motor.h(64): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+        if(speed > 95.0) speed = 95.0;
+.\src\BLDC_Motor\BLDC_Motor.h(67): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+        if(speed < 0.01 && speed > -0.01) speed = 0;
+.\src\BLDC_Motor\BLDC_Motor.h(110): warning:  #68-D: integer conversion resulted in a change of sign
+            _sgn = -1;
+.\src\BLDC_Motor\BLDC_Motor.h(103): warning:  #550-D: variable "_sgn"  was set but never used
+        char _sgn = 1;
+.\src\BLDC_Motor\BLDC_Motor.h(104): warning:  #177-D: variable "_has_sent_non_zero"  was declared but never referenced
+        bool _has_sent_non_zero = false;
+.\src\BLDC_Motor\BLDC_Motor.h(136): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+        if(command != 0.0)
+.\src\BLDC_Motor\BLDC_Motor.h(141): warning:  #68-D: integer conversion resulted in a change of sign
+            _sgn = -1;
+.\src\BLDC_Motor\BLDC_Motor.h(132): warning:  #550-D: variable "_command"  was set but never used
+        int _command;
+.\src\BLDC_Motor\BLDC_Motor.h(134): warning:  #550-D: variable "_sgn"  was set but never used
+        char _sgn = 1;
+.\src\robot_math\robot_math.h(58): warning:  #186-D: pointless comparison of unsigned integer with zero
+    if(len1 < 0)
+.\src\robot_math\robot_math.h(64): warning:  #186-D: pointless comparison of unsigned integer with zero
+    if(len2 < 0)
+.\src\robot_math\robot_math.h(216): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+    if(point_distance <= 4.5)
+.\src\robot_math\robot_math.h(217): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      return constrain(20, 20, 0.6 * (point_distance + 28.6));
+.\src\robot_math\robot_math.h(219): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      return constrain(70, 20, 5.5 * (point_distance - 1)); // 5.5 -1
+.\src\robot_math\robot_math.h(231): warning:  #940-D: missing return statement at end of non-void function "find_vector_circle_cross_points" 
+  }
+.\src\robot_math\robot_math.h(239): warning:  #940-D: missing return statement at end of non-void function "find_vector_circle_cross_points(circle, point, std::int8_t)" 
+  }
+.\src\robot_math\robot_math.h(245): warning:  #940-D: missing return statement at end of non-void function "calculate_defender_defence_speed" 
+  }
+.\src\Utilities\Points.h(51): warning:  #1-D: last line of file ends without a newline
+  }
+.\src\ball_detour\ball_detour.h(44): warning:  #177-D: variable "_result_speed"  was declared but never referenced
+    float _result_speed;
+.\src\ball_detour\ball_detour.h(75): warning:  #177-D: variable "_result_speed"  was declared but never referenced
+    float _result_speed;
+.\src\adc\adc.h(29): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\dma\dma.h(16): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\flashka\flashka.h(19): warning:  #111-D: statement is unreachable
+    FLASH_Lock();
+.\src\mpu9250_spi\IMU_SPI.h(17): warning:  #815-D: type qualifier on return type is meaningless
+  		volatile void updateAnglesFromFIFO();
+.\src\mpu9250_spi\IMU_SPI.h(70): warning:  #815-D: type qualifier on return type is meaningless
+  volatile void IMU::updateAnglesFromFIFO()
+.\src\Display\SSD1306\SSD1306.h(156): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\src\Display\font.h(1598): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\src\BNO055\BNO055.h(21): warning:  #1-D: last line of file ends without a newline
+  };
+.\src\Robot\Robot.h(489): warning:  #940-D: missing return statement at end of non-void function "Robot::keck_new" 
+    }
+.\src\Robot\Robot.h(726): warning:  #940-D: missing return statement at end of non-void function "Robot::enable_trajectory" 
+    }
+.\src\Robot\Robot.h(824): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              Robot::move_speed *= 0.75;
+.\src\Robot\Robot.h(777): warning:  #177-D: variable "d_1_Speed"  was declared but never referenced
+      int d_1_Speed, d_2_speed;
+.\src\Robot\Robot.h(777): warning:  #177-D: variable "d_2_speed"  was declared but never referenced
+      int d_1_Speed, d_2_speed;
+.\src\Robot\Robot.h(778): warning:  #177-D: variable "accel_1_Length"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(778): warning:  #177-D: variable "accel_2_Length"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(778): warning:  #177-D: variable "whole_path"  was declared but never referenced
+      int accel_1_Length, accel_2_Length, whole_path, start_point_distance; //1.1 - tg of line
+.\src\Robot\Robot.h(943): warning:  #940-D: missing return statement at end of non-void function "Robot::predict" 
+    }
+.\src\Robot\Robot.h(1634): warning:  #1-D: last line of file ends without a newline
+  }
+main.cpp(479): warning:  #9-D: nested comment is not allowed
+              else if(Robot::time % 10 <= 10/*/*Robot::time % 10 <= 9 true*//*Robot::robot_x < 0*//*true*/) // 0
+main.cpp(137): warning:  #550-D: variable "prev_read"  was set but never used
+      static bool prev_read = 0;
+main.cpp(1329): warning:  #1-D: last line of file ends without a newline
+  }
+main.cpp: 43 warnings, 0 errors
+linking...
+Program Size: Code=69608 RO-data=3476 RW-data=25580 ZI-data=12676  
+".\Objects\aaa.axf" - 0 Error(s), 43 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +130,7 @@ Package Vendor: Keil
   D:\keil\pack_folder\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

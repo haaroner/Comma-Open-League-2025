@@ -36,7 +36,7 @@ pin::pin(char pin_gpio, uint8_t pin_num, uint16_t function)
 	else if(pin_num == 14)  {_pinNumber = GPIO_Pin_14; _pinSourceGPIO = GPIO_PinSource14;}
 	else if(pin_num == 15)  {_pinNumber = GPIO_Pin_15; _pinSourceGPIO = GPIO_PinSource15;}
 	
-	if(function == uart1 || function == uart2 || function == uart3 || function == uart6)//uarts(1, 2, 3, 6)
+	if(function == uart1 || function == uart2 || function == uart3 || function == uart4 || function == uart6)//uarts(1, 2, 3, 6)
 	{
 		_modeGPIO = GPIO_Mode_AF;
 		_speedGPIO = GPIO_Speed_100MHz;
@@ -45,6 +45,7 @@ pin::pin(char pin_gpio, uint8_t pin_num, uint16_t function)
 		if(function == uart1) _AFGPIO = GPIO_AF_USART1;
 		if(function == uart2) _AFGPIO = GPIO_AF_USART2;
 		if(function == uart3) _AFGPIO = GPIO_AF_USART3;
+    if(function == uart4) _AFGPIO = GPIO_AF_UART4;
 		if(function == uart6) _AFGPIO = GPIO_AF_USART6;
 	}
 	else if(function == i2c) //i2c
