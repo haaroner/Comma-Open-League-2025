@@ -38,10 +38,10 @@ namespace Points
   
   /* Defender points*/
   point defender_left_end(-40, 15);//-45 15
-  point defender_left_change_sector(-37, 30);//-30  30
+  point defender_left_change_sector(-37, 35);//-30  30
   
   point defender_right_end(38, 15);
-  point defender_right_change_sector(35, 30);
+  point defender_right_change_sector(35, 35);
   
   point defender_middle_cross_point;
   

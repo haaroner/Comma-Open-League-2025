@@ -60,7 +60,7 @@ int main()
   
   Robot::ball_led_adc.setBit();
   point challenge_point(0, 75); 
-  role = 1;//////////////////////////////////////////
+  role = 2;//////////////////////////////////////////1 = attacker
   Robot::init_robot(role);
   Robot::set_dribler_speed(0);
   Robot::wait(100);
@@ -169,7 +169,7 @@ int main()
       Robot::display_data(Robot::front_camera_data, Robot::ball_abs_angle);
       //Robot::display_data(Robot::is_ball_captured(), my_abs(Robot::_ball_sen_high_data - Robot::_ball_sen_low_data));
     }
-    else if(gaming_state == 1 && Robot::rcj_0.read())
+    else if(gaming_state == 1/* && Robot::rcj_0.read()*/)
     {
       if(role == 3)
       {
@@ -221,7 +221,7 @@ int main()
           Robot::keck_new(right_solenoid, L_capacitor, 5);
         }
         
-        if(attacker_state == 1)
+        if(attacker_state == 1)//go to ball
         {
           Robot::changeSmoothness(1);
           if(attacker_old_state != 1)
@@ -391,7 +391,7 @@ int main()
           
           if(Robot::ball_distance < 35 && my_abs(Robot::ball_loc_angle) > 20)
           {
-            Robot::move_speed = constrain(constrain(20, 0, 20 - (my_abs(Robot::ball_loc_angle) / 2)), 0, Robot::move_speed);
+            Robot::move_speed = constrain(constrain(20, 7, 20 - (my_abs(Robot::ball_loc_angle) / 2)), 0, Robot::move_speed);
           }
           //if(Robot::robot_y > 185)
             //Robot::move_speed = constrain(20, 0, Robot::move_speed);
@@ -464,12 +464,8 @@ int main()
             Robot::enable_game_zone_restriction(false);
             Robot::enable_trajectory(false);
             Robot::moveRobotAbs(0,0);
-            //Robot::wait(1000);
-            /*if(Robot::time % 10 <= 2 && 
-           my_abs(lead_to_degree_borders(Robot::forward_piece_angle - Robot::forward_angle) < 15) &&
-            attacker_2_state_trajectory_type == short_trajectory)*/
             if(false)
-            {
+            {//////////straing shot after trajectory
               _daleko = 1;
               Robot::set_dribler_speed(95);
               //Robot::wait(50);
@@ -478,18 +474,6 @@ int main()
             }
             else if(Robot::time % 10 <= 10/*/*Robot::time % 10 <= 9 true*//*Robot::robot_x < 0*//*true*/) // 0
             {
-              //Robot::set_dribler_speed(40, true);
-              //Robot::wait(500);
-              /*if(Robot::robot_x > 0)
-                Robot::wait(400); 
-              else
-                Robot::wait(400);
-              Robot::set_dribler_speed(0, true);
-              Robot::wait(1);
-              */
-             // Robot::set_dribler_speed(110, true, 30);//160 400
-              //Robot::wait(100);
-              //Robot::wait(500, true, 170*my_sgn(Robot::robot_x), 20);
               Robot::moveRobotAbs(0, 0);
               Robot::wait(50);
               
@@ -596,24 +580,24 @@ int main()
           attacker_old_state = 4;
           Robot::set_dribler_speed(100, true);
           if(Robot::forward_distance < 70) {
-          Robot::enable_game_zone_restriction(false);
-          Robot::enable_trajectory(false);
-          
-          Robot::moveRobotAbs(0,0);
-          //Robot::wait(50);
-          Robot::turn_to_gates(750, 20);
-//          if(_daleko !=0)
-//            Robot::wait(1000, true, Robot::forward_angle, 20, Robot::forward_angle);
-//          else
-//            Robot::wait(1000, true, Robot::forward_angle, 20, Robot::forward_angle);
-          _daleko = 0;
-          Robot::rotateRobot(0, 0);
-          Robot::wait(25);
-          Robot::set_dribler_speed(100, true);
-          Robot::wait(20);
-            if(my_abs(Robot::gyro) <= 90)
-              Robot::keck_new(middle_solenoid, two_capasitors, 250);
-            attacker_state = 1;
+            Robot::enable_game_zone_restriction(false);
+            Robot::enable_trajectory(false);
+            
+            Robot::moveRobotAbs(0,0);
+            //Robot::wait(50);
+            Robot::turn_to_gates(750, 20);
+  //          if(_daleko !=0)
+  //            Robot::wait(1000, true, Robot::forward_angle, 20, Robot::forward_angle);
+  //          else
+  //            Robot::wait(1000, true, Robot::forward_angle, 20, Robot::forward_angle);
+            _daleko = 0;
+            Robot::rotateRobot(0, 0);
+            Robot::wait(25);
+            Robot::set_dribler_speed(100, true);
+            Robot::wait(20);
+              if(my_abs(Robot::gyro) <= 90)
+                Robot::keck_new(middle_solenoid, two_capasitors, 250);
+              attacker_state = 1;
           }
           else {
           Robot::moveRobotAbs(lead_to_degree_borders(Robot::forward_angle), 90);
@@ -754,7 +738,7 @@ int main()
         }   
                   
         if(Robot::robot_y > 199 && Robot::robot_x < 33 && Robot::robot_x > -33)
-        {
+        {/////strafnaya zona
           Robot::moveRobotAbs(180, 15); 
           Robot::changeSmoothness(2);
         }          
@@ -783,7 +767,7 @@ int main()
            if(/*Robot::_dSSoft > 20 || */
              my_abs(Robot::ball_abs_x) > 55 || Robot::ball_abs_y > 170 || Robot::ball_abs_y < 35 || defender_move_point_dist > 8) defender_1_to_2_tim = Robot::time;
            
-           if(Robot::time - defender_1_to_2_tim > 1250 && 
+           if(Robot::time - defender_1_to_2_tim > 2250 && 
              (Robot::time - defender_2_to_1_tim > 2000))
            {
              defender_state = 2;
@@ -880,7 +864,7 @@ int main()
            
            Robot::set_dribler_speed(0);
            /*calculate all lines for defender geometry*/
-           
+           //////////////////////////////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!
            additional_defender_y = constrain(27, 0, Robot::ball_abs_y - (Points::defender_left_change_sector.y + 5));
            //additional_defender_y = 0;
            if(Robot::ball_seen_time > 1000)
@@ -1115,7 +1099,7 @@ int main()
           Robot::changeSmoothness(2);
         }                 
           
-        if(Robot::robot_y < 20)
+        if(Robot::robot_y < 20)////////////////////////////////!!!!!!!!!!!!!!!!!!
         {
           Robot::moveRobotAbs(0, 15);
           Robot::changeSmoothness(2);
